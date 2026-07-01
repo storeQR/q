@@ -2,9 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>متجر QR الاحترافي</title>
-    <!-- استدعاء الأيقونات -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -24,12 +23,13 @@
 
         html, body {
             height: 100%;
+            width: 100%;
         }
 
         body {
             background-color: var(--bg-dark);
             color: var(--text-white);
-            overflow-x: hidden;
+            overflow-x: hidden; /* منع الهروب الجانبي تماماً */
             display: flex;
             flex-direction: column;
         }
@@ -56,6 +56,7 @@
             padding: 20px 40px; background-color: var(--bg-darker);
             border-bottom: 1px solid rgba(30, 64, 175, 0.3);
             position: sticky; top: 0; z-index: 100;
+            width: 100%;
         }
         .header-right, .header-left { display: flex; align-items: center; gap: 20px; }
         .menu-btn, .cart-btn { background: none; border: none; color: var(--text-white); font-size: 24px; cursor: pointer; transition: color 0.3s; }
@@ -149,22 +150,29 @@
         .product-title { font-size: 16px; font-weight: bold; margin-bottom: 5px; color: #fff; }
         .product-desc { font-size: 13px; color: var(--text-gray); margin-bottom: 12px; flex-grow: 1; line-height: 1.4; }
         
+        /* شارات حالة التوفر والمخزون في الكرت */
+        .badge-status { display: inline-block; padding: 3px 8px; font-size: 11px; font-weight: bold; border-radius: 4px; margin-bottom: 8px; width: max-content; }
+        .badge-available { background-color: #22c55e; color: #fff; }
+        .badge-unavailable { background-color: #ef4444; color: #fff; }
+        .badge-later { background-color: #f59e0b; color: #fff; }
+        .stock-info { font-size: 12px; color: var(--text-gray); margin-bottom: 10px; }
+
         .price-container { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; }
         .product-price { color: #3b82f6; font-weight: bold; font-size: 16px; }
         .product-old-price { color: var(--text-gray); text-decoration: line-through; font-size: 13px; }
         .add-to-cart-btn { background: var(--primary-blue); color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
         .add-to-cart-btn:hover { background: #2563eb; }
+        .add-to-cart-btn:disabled { background: #374151; color: #9ca3af; cursor: not-allowed; }
 
-        /* التقييمات والتعليقات */
-        .comments-section-wrapper { margin-top: 30px; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); }
+        /* التقييمات والتعليقات المبسطة */
+        .comments-section-wrapper { margin-top: 30px; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); width: 100%; max-width: 100%; overflow: hidden; }
         .comments-list { margin-top: 15px; display: flex; flex-direction: column; gap: 12px; }
-        .comment-card { display: flex; gap: 15px; background: var(--bg-darker); padding: 12px; border-radius: 6px; align-items: flex-start; position: relative; }
+        .comment-card { display: flex; gap: 15px; background: var(--bg-darker); padding: 12px; border-radius: 6px; align-items: flex-start; position: relative; max-width: 100%; overflow: hidden; }
         .comment-avatar { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; background: #333; flex-shrink: 0; }
-        .comment-details { flex: 1; }
-        .comment-name { font-weight: bold; font-size: 14px; color: #fff; display: flex; justify-content: space-between; align-items: center; }
-        .comment-desc { font-size: 12px; color: var(--text-gray); margin-bottom: 5px; }
-        .comment-text { font-size: 13px; color: #e5e7eb; line-height: 1.4; }
-        .stars-container { color: #ffd700; font-size: 12px; }
+        .comment-details { flex: 1; min-width: 0; }
+        .comment-name { font-weight: bold; font-size: 14px; color: #fff; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+        .comment-text { font-size: 13px; color: #e5e7eb; line-height: 1.4; word-break: break-word; margin-top: 5px; }
+        .stars-container { color: #ffd700; font-size: 12px; flex-shrink: 0; }
 
         /* نافذة النجاح الفخمة */
         .success-box { text-align: center; padding: 20px; }
@@ -212,7 +220,7 @@
         .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; display: none; }
         .sidebar-overlay.active { display: block; }
 
-        footer { background-color: var(--bg-darker); padding: 50px 40px 30px 40px; border-top: 1px solid rgba(30, 64, 175, 0.3); text-align: center; margin-top: auto; width: 100%; }
+        footer { background-color: var(--bg-darker); padding: 50px 40px 30px 40px; border-top: 1px solid rgba(30, 64, 175, 0.3); text-align: center; margin-top: auto; width: 100%; overflow-x: hidden; }
         .footer-grid { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 35px; align-items: center; }
         .footer-item { max-width: 650px; width: 100%; }
         .footer-item h3 { font-size: 22px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 10px; }
@@ -230,10 +238,8 @@
 </head>
 <body>
 
-    <!-- شاشة البداية -->
     <div id="splash-screen"><div class="splash-logo">QR</div></div>
 
-    <!-- الهيدر العلوي -->
     <header>
         <div class="header-right">
             <button class="menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
@@ -244,7 +250,6 @@
         </div>
     </header>
 
-    <!-- شريط البحث -->
     <div class="search-container" id="mainSearchContainer">
         <div class="search-box">
             <i class="fas fa-search"></i>
@@ -252,7 +257,6 @@
         </div>
     </div>
 
-    <!-- القائمة الجانبية -->
     <div class="sidebar-overlay" id="overlay" onclick="closeAll()"></div>
     <div class="sidebar" id="sidebar">
         <button class="close-sidebar" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
@@ -269,7 +273,6 @@
         </div>
     </div>
 
-    <!-- نافذة السلة الجانبية -->
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
             <h3>سلة المشتريات</h3>
@@ -285,12 +288,10 @@
         </div>
     </div>
 
-    <!-- المساحة الرئيسية -->
     <main class="main-content" id="mainContentArea">
         <div id="productsDisplayContainer"></div>
     </main>
 
-    <!-- واجهة تسجيل دخول المسؤول السري -->
     <div class="admin-modal" id="loginModal">
         <div class="admin-box" style="max-width: 400px;">
             <h3 style="margin-bottom: 20px;">تسجيل الدخول للإدارة</h3>
@@ -303,12 +304,28 @@
         </div>
     </div>
 
-    <!-- لوحة التحكم الاحترافية اللانهائية وعالية التنظيم -->
     <div class="admin-modal" id="controlPanelModal">
         <div class="admin-box">
             <h2 style="color: #22c55e; margin-bottom: 25px; text-align: center;">لوحة إدارة المتجر الشاملة</h2>
             
-            <!-- لوحة الطلبات والمشتريات -->
+            <div class="admin-section">
+                <h4><i class="fas fa-box"></i> التحكم بالمنتجات الحالية والمخزون</h4>
+                <div style="overflow-x: auto;">
+                    <table class="items-list-table">
+                        <thead>
+                            <tr>
+                                <th>اسم المنتج</th>
+                                <th>السعر</th>
+                                <th>الكمية بالمخزن</th>
+                                <th>حالة التوفر</th>
+                                <th>الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminProductsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="admin-section">
                 <h4><i class="fas fa-tasks"></i> إدارة طلبات العملاء المسبقة</h4>
                 <div class="form-group">
@@ -330,7 +347,6 @@
                 </div>
             </div>
 
-            <!-- لوحة التعليقات للتحكم -->
             <div class="admin-section">
                 <h4><i class="fas fa-comments"></i> الإشراف على مراجعات وتعليقات العملاء</h4>
                 <div style="overflow-x: auto;">
@@ -338,7 +354,6 @@
                         <thead>
                             <tr>
                                 <th>الاسم</th>
-                                <th>النوع</th>
                                 <th>التعليق</th>
                                 <th>إجراء الإداري</th>
                             </tr>
@@ -348,7 +363,6 @@
                 </div>
             </div>
 
-            <!-- لوحة الأقسام -->
             <div class="admin-section">
                 <h4><i class="fas fa-folder-plus"></i> إدارة أقسام المتجر</h4>
                 <div class="form-group">
@@ -358,9 +372,8 @@
                 <button class="admin-btn" onclick="addNewSection()">إنشاء القسم</button>
             </div>
 
-            <!-- لوحة المنتجات -->
             <div class="admin-section">
-                <h4><i class="fas fa-box-open"></i> إضافة منتج جديد</h4>
+                <h4><i class="fas fa-box-open"></i> إضافة منتج جديد للمتجر</h4>
                 <div class="form-group"><label>اختر القسم التابع له</label><select id="pSectionSelect"></select></div>
                 <div class="form-group"><label>رفع صورة المنتج من ألبوم الصور</label><input type="file" id="pLocalImg" accept="image/*"></div>
                 <div class="form-group"><label>اسم المنتج</label><input type="text" id="pTitle"></div>
@@ -374,14 +387,22 @@
                     <button class="add-more-btn" onclick="addMoreDetailField()"><i class="fas fa-plus"></i> إضافة سطر تفاصيل إضافي</button>
                 </div>
 
-                <div class="form-group" style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                <div class="form-group" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
                     <div><label>السعر الحالي (ر.س)</label><input type="number" id="pPrice" value="0"></div>
-                    <div><label>السعر قبل الخصم (ر.س) - اختياري</label><input type="number" id="pOldPrice" value="0"></div>
+                    <div><label>السعر قبل الخصم (ر.س)</label><input type="number" id="pOldPrice" value="0"></div>
+                    <div><label>الكمية المتاحة</label><input type="number" id="pStock" value="10"></div>
+                </div>
+                <div class="form-group">
+                    <label>حالة التوفر البدئية</label>
+                    <select id="pStatus">
+                        <option value="available">متوفر</option>
+                        <option value="unavailable">غير متوفر</option>
+                        <option value="later">متوفر لاحقاً</option>
+                    </select>
                 </div>
                 <button class="admin-btn" style="width:100%;" onclick="addNewProductItem()">حفظ ونشر المنتج بالمتجر</button>
             </div>
 
-            <!-- لوحة الروابط المهمة -->
             <div class="admin-section">
                 <h4><i class="fas fa-link"></i> الروابط المهمة بأسفل الموقع (حد أقصى 6)</h4>
                 <div class="form-group"><label>اسم الرابط</label><input type="text" id="linkTitle" placeholder="مثال: من نحن"></div>
@@ -398,7 +419,6 @@
         </div>
     </div>
 
-    <!-- نافذة تفاصيل المنتجات / صفحات الروابط المهمة الداخلية -->
     <div class="product-modal" id="productDetailModal">
         <div class="modal-content">
             <button class="back-modal-btn" onclick="closeProductDetail()"><i class="fas fa-arrow-right"></i></button>
@@ -406,7 +426,6 @@
         </div>
     </div>
 
-    <!-- الجزء السفلي الفوتر الرسمي المستقر -->
     <footer>
         <div class="footer-grid">
             <div class="footer-item">
@@ -418,11 +437,9 @@
                 <p>نملك العمل الحر وموثقين بشكل رسمي لتقديم خدمات آمنة ومضمونة 100%.</p>
             </div>
 
-            <!-- تعليقات وتقييمات المتجر العامة -->
             <div class="footer-item" style="max-width:100%;">
                 <h3>آراء وتقييمات عملائنا <i class="fas fa-star" style="color:#ffd700;"></i></h3>
                 <div class="comments-section-wrapper" id="storeCommentsWrapper">
-                    <!-- نموذج إضافة تعليق عام إذا كان مؤهلاً -->
                     <div id="storeCommentFormContainer"></div>
                     <div class="comments-list" id="storeCommentsList"></div>
                 </div>
@@ -439,7 +456,6 @@
         </div>
     </footer>
 
-    <!-- سكربت التشغيل المتكامل والذكي جداً لحفظ البيانات والتعليقات والطلبيات -->
     <script>
         const sidebar = document.getElementById('sidebar');
         const cartSidebar = document.getElementById('cartSidebar');
@@ -479,6 +495,7 @@
                 renderAdminLinksTable();
                 renderAdminOrders();
                 renderAdminComments();
+                renderAdminProductsTable();
             } else { alert('اسم المستخدم السري خاطئ!'); }
         }
         function closeControlPanel() { document.getElementById('controlPanelModal').style.display = 'none'; }
@@ -536,6 +553,8 @@
             const desc = document.getElementById('pDesc').value;
             const price = parseFloat(document.getElementById('pPrice').value) || 0;
             const oldPrice = parseFloat(document.getElementById('pOldPrice').value) || 0;
+            const stock = parseInt(document.getElementById('pStock').value) || 0;
+            const status = document.getElementById('pStatus').value;
             const fileInput = document.getElementById('pLocalImg');
 
             if(!secId) return alert('يرجى إنشاء قسم أولاً لتضيف المنتج داخله!');
@@ -551,25 +570,84 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     finalImg = e.target.result;
-                    saveProduct(secId, finalImg, title, desc, detailsArray, price, oldPrice);
+                    saveProduct(secId, finalImg, title, desc, detailsArray, price, oldPrice, stock, status);
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                saveProduct(secId, finalImg, title, desc, detailsArray, price, oldPrice);
+                saveProduct(secId, finalImg, title, desc, detailsArray, price, oldPrice, stock, status);
             }
         }
 
-        function saveProduct(secId, img, title, desc, details, price, oldPrice) {
-            productsDatabase.push({ id: Date.now(), secId, img, title, desc, details, price, oldPrice });
+        function saveProduct(secId, img, title, desc, details, price, oldPrice, stock, status) {
+            productsDatabase.push({ id: Date.now(), secId, img, title, desc, details, price, oldPrice, stock, status });
             saveData();
             document.getElementById('pTitle').value = '';
             document.getElementById('pDesc').value = '';
             document.getElementById('pPrice').value = '0';
             document.getElementById('pOldPrice').value = '0';
+            document.getElementById('pStock').value = '10';
             document.getElementById('dynamicDetailsInputs').innerHTML = `<input type="text" class="prod-detail-line" placeholder="سطر تفاصيل 1" style="margin-bottom:8px;">`;
             document.getElementById('pLocalImg').value = '';
             renderDisplayArea();
+            renderAdminProductsTable();
             alert('تم حفظ المنتج بنجاح وتخزينه!');
+        }
+
+        // لوحة التحكم المضافة لتعديل وحذف المنتجات وتغيير الكمية
+        function renderAdminProductsTable() {
+            const tbody = document.getElementById('adminProductsTableBody');
+            if(!tbody) return;
+            tbody.innerHTML = '';
+            productsDatabase.forEach(p => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td><strong>${p.title}</strong></td>
+                        <td>${p.price} ر.س</td>
+                        <td>
+                            <input type="number" value="${p.stock}" style="width:60px; padding:4px; background:#111; color:#fff; border:1px solid #444;" onchange="updateProductStock(${p.id}, this.value)">
+                        </td>
+                        <td>
+                            <select style="padding:4px; background:#111; color:#fff; border:1px solid #444;" onchange="updateProductStatus(${p.id}, this.value)">
+                                <option value="available" ${p.status === 'available' ? 'selected' : ''}>متوفر</option>
+                                <option value="unavailable" ${p.status === 'unavailable' ? 'selected' : ''}>غير متوفر</option>
+                                <option value="later" ${p.status === 'later' ? 'selected' : ''}>متوفر لاحقاً</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="qty-btn" style="background:#ef4444;" onclick="deleteProductItem(${p.id})">حذف ❌</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function updateProductStock(id, newStock) {
+            let p = productsDatabase.find(item => item.id === id);
+            if(p) {
+                p.stock = parseInt(newStock) || 0;
+                if(p.stock <= 0) p.status = 'unavailable';
+                saveData();
+                renderDisplayArea();
+            }
+        }
+
+        function updateProductStatus(id, newStatus) {
+            let p = productsDatabase.find(item => item.id === id);
+            if(p) {
+                p.status = newStatus;
+                saveData();
+                renderDisplayArea();
+            }
+        }
+
+        function deleteProductItem(id) {
+            if(confirm("هل أنت متأكد من حذف هذا المنتج نهائياً من المتجر؟")) {
+                productsDatabase = productsDatabase.filter(item => item.id !== id);
+                shoppingCart = shoppingCart.filter(item => item.id !== id);
+                saveData();
+                renderDisplayArea();
+                renderAdminProductsTable();
+            }
         }
 
         function addNewImportantLink() {
@@ -613,9 +691,32 @@
             });
         }
 
-        // إتمام الطلبية الذكي وصناعة رقم تتبع خماسي وربطه بالواتساب
+        // إتمام الطلبية ونقصان الكمية تلقائياً من المخزن لكل كرت
         function checkoutOrder() {
             if(shoppingCart.length === 0) return alert('سلتك فارغة لتتم الطلب!');
+            
+            // فحص المخزون الفعلي وتحديثه قبل الحفظ
+            for(let item of shoppingCart) {
+                let dbProd = productsDatabase.find(p => p.id === item.id);
+                if(dbProd) {
+                    if(dbProd.stock < item.qty) {
+                        return alert(`عذراً، الكمية المطلوبة من (${dbProd.title}) غير متوفرة بالكامل بالمخزن حالياً!`);
+                    }
+                }
+            }
+
+            // خصم الكميات من المخزن
+            shoppingCart.forEach(item => {
+                let dbProd = productsDatabase.find(p => p.id === item.id);
+                if(dbProd) {
+                    dbProd.stock -= item.qty;
+                    if(dbProd.stock <= 0) {
+                        dbProd.stock = 0;
+                        dbProd.status = 'unavailable';
+                    }
+                }
+            });
+
             const orderId = Math.floor(10000 + Math.random() * 90000).toString(); 
             const orderTotal = shoppingCart.reduce((sum, item) => sum + (item.price * item.qty), 0);
             
@@ -623,7 +724,7 @@
                 id: orderId,
                 items: [...shoppingCart],
                 total: orderTotal,
-                status: 'pending', // pending, completed, rejected
+                status: 'pending',
                 date: new Date().toLocaleDateString('ar-EG')
             };
 
@@ -714,7 +815,6 @@
             const container = document.getElementById('productsDisplayContainer');
             container.innerHTML = '';
 
-            // عرض المشتريات المسبقة للمشتري
             if(currentSectionFilter === 'orders') {
                 container.innerHTML = `<h3 class="section-title">قائمة مشترياتك السابقة</h3>`;
                 if(ordersDatabase.length === 0) {
@@ -773,17 +873,33 @@
             } else {
                 prods.forEach(p => {
                     let oldPriceTag = p.oldPrice > 0 ? `<span class="product-old-price">${p.oldPrice} ر.س</span>` : '';
+                    
+                    // حساب شارة الحالة والمخزون والتحكم بالزر
+                    let badgeHTML = `<span class="badge-status badge-available">متوفر</span>`;
+                    let isBtnDisabled = false;
+                    if(p.status === 'unavailable' || p.stock <= 0) {
+                        badgeHTML = `<span class="badge-status badge-unavailable">غير متوفر</span>`;
+                        isBtnDisabled = true;
+                    } else if(p.status === 'later') {
+                        badgeHTML = `<span class="badge-status badge-later">متوفر لاحقاً</span>`;
+                        isBtnDisabled = true;
+                    }
+
                     grid.innerHTML += `
                         <div class="product-card" onclick="openProductDetail(${p.id})">
                             <img src="${p.img}" class="product-img">
                             <div class="product-info">
                                 <div class="product-title">${p.title}</div>
                                 <div class="product-desc">${p.desc}</div>
+                                ${badgeHTML}
+                                <div class="stock-info">الكمية المتاحة: ${p.stock}</div>
                                 <div class="price-container">
                                     <span class="product-price">${p.price} ر.س</span>
                                     ${oldPriceTag}
                                 </div>
-                                <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart(${p.id})">إضافة للسلة</button>
+                                <button class="add-to-cart-btn" ${isBtnDisabled ? 'disabled' : ''} onclick="event.stopPropagation(); addToCart(${p.id})">
+                                    ${isBtnDisabled ? 'نفذت الكمية' : 'إضافة للسلة'}
+                                </button>
                             </div>
                         </div>
                     `;
@@ -801,7 +917,7 @@
             }
         }
 
-        // تفاصيل المنتج + نظام تعليقات المنتج الفردي للمشترين الموثقين
+        // تفاصيل المنتج
         function openProductDetail(id) {
             const p = productsDatabase.find(item => item.id === id);
             if(!p) return;
@@ -811,24 +927,30 @@
             const body = document.getElementById('modalDynamicBody');
             let oldPriceTag = p.oldPrice > 0 ? `<span class="product-old-price" style="font-size:16px;">${p.oldPrice} ر.س</span>` : '';
             
+            let badgeHTML = `<span class="badge-status badge-available">متوفر</span>`;
+            let isBtnDisabled = false;
+            if(p.status === 'unavailable' || p.stock <= 0) {
+                badgeHTML = `<span class="badge-status badge-unavailable">غير متوفر</span>`;
+                isBtnDisabled = true;
+            } else if(p.status === 'later') {
+                badgeHTML = `<span class="badge-status badge-later">متوفر لاحقاً</span>`;
+                isBtnDisabled = true;
+            }
+
             body.innerHTML = `
                 <img src="${p.img}" class="modal-img">
                 <h2 style="margin-bottom: 5px;">${p.title}</h2>
-                <p style="color: var(--text-gray); margin-bottom: 15px;">${p.desc}</p>
+                <p style="color: var(--text-gray); margin-bottom: 10px;">${p.desc}</p>
+                <div style="margin-bottom:15px;">${badgeHTML} <span style="font-size:13px; color:var(--text-gray); margin-right:10px;">الكمية المتوفرة: ${p.stock}</span></div>
                 <div class="price-container" style="margin-bottom:20px;">
                     <span class="product-price" style="font-size:22px;">${p.price} ر.س</span>
                     ${oldPriceTag}
                 </div>
                 <div id="modalDetailsRows"></div>
-                <button class="add-to-cart-btn" style="width:100%; margin-top:25px; padding:12px; font-size:16px;" onclick="addToCart(${p.id})">إضافة إلى السلة</button>
+                <button class="add-to-cart-btn" ${isBtnDisabled ? 'disabled' : ''} style="width:100%; margin-top:25px; padding:12px; font-size:16px;" onclick="addToCart(${p.id})">
+                    ${isBtnDisabled ? 'المنتج غير متاح حالياً' : 'إضافة إلى السلة'}
+                </button>
                 
-                <!-- قسم تعليقات المنتج الفردي -->
-                <div class="comments-section-wrapper" style="margin-top:25px;">
-                    <h3>مراجعات المنتج</h3>
-                    <div id="productCommentFormContainer"></div>
-                    <div class="comments-list" id="productCommentsList"></div>
-                </div>
-
                 <h4 style="margin-top:35px; border-top:1px solid rgba(255,255,255,0.1); padding-top:15px; margin-bottom:15px;">منتجات مقترحة عشوائياً</h4>
                 <div class="products-grid" id="modalRandomGrid" style="grid-template-columns: repeat(2, 1fr); gap: 15px;"></div>
             `;
@@ -837,8 +959,6 @@
             if(p.details && p.details.length > 0) {
                 p.details.forEach(line => { rowsContainer.innerHTML += `<div class="dynamic-row">${line}</div>`; });
             } else { rowsContainer.innerHTML = `<div class="dynamic-row">لا توجد تفاصيل إضافية.</div>`; }
-
-            renderProductComments(id);
 
             const randGrid = document.getElementById('modalRandomGrid');
             let filtered = productsDatabase.filter(item => item.id !== id);
@@ -855,24 +975,15 @@
             document.getElementById('productDetailModal').style.display = 'flex';
         }
 
-        // فحص صلاحية التعليق (يجب أن يكون لديه طلب مقبول ومكتمل ويحتوي المنتج إذا لزم الأمر)
+        // فحص صلاحية التعليق التلقائي
         function checkCommentEligibility(type, targetId = null) {
             let approvedOrders = ordersDatabase.filter(o => o.status === 'completed');
             if(approvedOrders.length === 0) return false;
-
-            if(type === 'store') {
-                let existingStoreComments = commentsDatabase.filter(c => c.type === 'store');
-                return existingStoreComments.length < approvedOrders.length;
-            } else if(type === 'product') {
-                let productInApprovedOrders = approvedOrders.some(o => o.items.some(item => item.id === targetId));
-                if(!productInApprovedOrders) return false;
-                let existingProductComments = commentsDatabase.filter(c => c.type === 'product' && c.targetId === targetId);
-                let allowedCount = approvedOrders.filter(o => o.items.some(item => item.id === targetId)).length;
-                return existingProductComments.length < allowedCount;
-            }
-            return false;
+            let existingStoreComments = commentsDatabase.filter(c => c.type === 'store');
+            return existingStoreComments.length < approvedOrders.length;
         }
 
+        // نموذج التعليقات والآراء بأسفل الموقع (تعديل تبسيط كامل للشاشة)
         function renderStoreCommentsSection() {
             const formContainer = document.getElementById('storeCommentFormContainer');
             const listContainer = document.getElementById('storeCommentsList');
@@ -880,19 +991,18 @@
 
             if(checkCommentEligibility('store')) {
                 formContainer.innerHTML = `
-                    <div style="display:flex; flex-direction:column; gap:10px; background:rgba(0,0,0,0.2); padding:12px; border-radius:6px; margin-bottom:15px;">
-                        <h4 style="font-size:13px; color:#22c55e;">لديك طلب مكتمل ومقبول! يمكنك تقييم المتجر:</h4>
-                        <div class="form-group" style="margin:0;"><input type="text" id="scName" placeholder="الاسم" style="padding:6px;"></div>
-                        <div class="form-group" style="margin:0;"><input type="text" id="scDesc" placeholder="الوصف (مثال: لاعب، يوتيوبر)" style="padding:6px;"></div>
-                        <div class="form-group" style="margin:0;"><textarea id="scText" placeholder="اكتب تعليقك هنا..." rows="2" style="padding:6px;"></textarea></div>
+                    <div style="display:flex; flex-direction:column; gap:10px; background:rgba(0,0,0,0.2); padding:12px; border-radius:6px; margin-bottom:15px; width:100%;">
+                        <h4 style="font-size:13px; color:#22c55e;">لديك طلب مكتمل ومقبول! ضع رأيك بمتجرنا:</h4>
+                        <div class="form-group" style="margin:0;"><input type="text" id="scName" placeholder="اسمك الكريم" style="padding:8px;"></div>
+                        <div class="form-group" style="margin:0;"><textarea id="scText" placeholder="اكتب مراجعتك أو رأيك هنا بكل صراحة..." rows="2" style="padding:8px; font-family:inherit;"></textarea></div>
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; align-items:center;">
-                            <div><label style="font-size:11px; color:var(--text-gray);">صورة الحساب (ألبومك):</label><input type="file" id="scAvatar" accept="image/*" style="font-size:11px; padding:0; background:none; border:none;"></div>
+                            <div><label style="font-size:11px; color:var(--text-gray);">صورة أو شعار (اختياري):</label><input type="file" id="scAvatar" accept="image/*" style="font-size:11px; padding:0; background:none; border:none;"></div>
                             <div>
-                                <label style="font-size:11px; color:var(--text-gray);">التقييم بالنجوم:</label>
-                                <select id="scStars" style="padding:4px; font-size:12px;"><option value="5">5 نجوم ⭐⭐⭐⭐⭐</option><option value="4">4 نجوم ⭐⭐⭐⭐</option><option value="3">3 نجوم ⭐⭐⭐</option><option value="2">2 نجمة ⭐⭐</option><option value="1">1 نجمة ⭐</option></select>
+                                <label style="font-size:11px; color:var(--text-gray);">التقييم:</label>
+                                <select id="scStars" style="padding:4px; font-size:12px; background:#111; color:white; border:1px solid #444;"><option value="5">⭐⭐⭐⭐⭐ (5/5)</option><option value="4">⭐⭐⭐⭐ (4/5)</option><option value="3">⭐⭐⭐ (3/5)</option></select>
                             </div>
                         </div>
-                        <button class="admin-btn" style="width:100%; font-size:12px; margin:0;" onclick="submitStoreComment()">نشر مراجعتي للمتجر</button>
+                        <button class="admin-btn" style="width:100%; font-size:12px; margin:0; padding:8px;" onclick="submitStoreComment()">نشر رأيي بالمتجر</button>
                     </div>
                 `;
             } else { formContainer.innerHTML = ''; }
@@ -906,7 +1016,6 @@
                         <img src="${avatar}" class="comment-avatar">
                         <div class="comment-details">
                             <div class="comment-name"><span>${c.name}</span> <span class="stars-container">${starsHTML}</span></div>
-                            <div class="comment-desc">${c.desc}</div>
                             <div class="comment-text">${c.text}</div>
                         </div>
                     </div>
@@ -916,7 +1025,6 @@
 
         function submitStoreComment() {
             const name = document.getElementById('scName').value.trim();
-            const desc = document.getElementById('scDesc').value.trim();
             const text = document.getElementById('scText').value.trim();
             const stars = parseInt(document.getElementById('scStars').value);
             const fileInput = document.getElementById('scAvatar');
@@ -928,76 +1036,18 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     finalAvatar = e.target.result;
-                    saveStoreComment(name, desc, text, stars, finalAvatar);
+                    saveStoreComment(name, text, stars, finalAvatar);
                 };
                 reader.readAsDataURL(fileInput.files[0]);
-            } else { saveStoreComment(name, desc, text, stars, 'https://www.w3schools.com/howto/img_avatar.png'); }
+            } else { saveStoreComment(name, text, stars, 'https://www.w3schools.com/howto/img_avatar.png'); }
         }
 
-        function saveStoreComment(name, desc, text, stars, avatar) {
-            commentsDatabase.push({ id: Date.now(), type: 'store', targetId: null, name, desc, text, stars, avatar });
+        function saveStoreComment(name, text, stars, avatar) {
+            commentsDatabase.push({ id: Date.now(), type: 'store', targetId: null, name, desc: '', text, stars, avatar });
             saveData();
             renderStoreCommentsSection();
-            alert('تم نشر تعليقك العام بالمتجر بنجاح!');
-        }
-
-        // تعليقات المنتج الفردي الداخلية
-        function renderProductComments(productId) {
-            const formContainer = document.getElementById('productCommentFormContainer');
-            const listContainer = document.getElementById('productCommentsList');
-            listContainer.innerHTML = '';
-
-            if(checkCommentEligibility('product', productId)) {
-                formContainer.innerHTML = `
-                    <div style="display:flex; flex-direction:column; gap:8px; background:rgba(255,255,255,0.02); padding:10px; border-radius:6px; margin-bottom:10px; margin-top:10px;">
-                        <h4 style="font-size:12px; color:#22c55e;">لقد اشتريت هذا المنتج سابقاً! ضع تعليقك:</h4>
-                        <input type="text" id="pcName" placeholder="الاسم" style="padding:6px; background:var(--bg-dark); border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:4px; font-size:12px; outline:none;">
-                        <input type="text" id="pcDesc" placeholder="الوصف" style="padding:6px; background:var(--bg-dark); border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:4px; font-size:12px; outline:none;">
-                        <textarea id="pcText" placeholder="اكتب مراجعتك للمنتج..." rows="2" style="padding:6px; background:var(--bg-dark); border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:4px; font-size:12px; outline:none;"></textarea>
-                        <div style="font-size:11px;"><label>صورة الحساب:</label> <input type="file" id="pcAvatar" accept="image/*"></div>
-                        <button class="admin-btn" style="font-size:12px; padding:6px; margin:0;" onclick="submitProductComment(${productId})">نشر تعليق المنتج</button>
-                    </div>
-                `;
-            } else { formContainer.innerHTML = ''; }
-
-            let prodComments = commentsDatabase.filter(c => c.type === 'product' && c.targetId === productId);
-            prodComments.forEach(c => {
-                let avatar = c.avatar || 'https://www.w3schools.com/howto/img_avatar.png';
-                listContainer.innerHTML += `
-                    <div class="comment-card">
-                        <img src="${avatar}" class="comment-avatar">
-                        <div class="comment-details">
-                            <div class="comment-name">${c.name}</div>
-                            <div class="comment-desc">${c.desc}</div>
-                            <div class="comment-text">${c.text}</div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function submitProductComment(productId) {
-            const name = document.getElementById('pcName').value.trim();
-            const desc = document.getElementById('pcDesc').value.trim();
-            const text = document.getElementById('pcText').value.trim();
-            const fileInput = document.getElementById('pcAvatar');
-
-            if(!name || !text) return alert('الاسم ونص التعليق مطلوبان!');
-
-            if(fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    saveProductComment(productId, name, desc, text, e.target.result);
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            } else { saveProductComment(productId, name, desc, text, 'https://www.w3schools.com/howto/img_avatar.png'); }
-        }
-
-        function saveProductComment(productId, name, desc, text, avatar) {
-            commentsDatabase.push({ id: Date.now(), type: 'product', targetId: productId, name, desc, text, stars: 5, avatar });
-            saveData();
-            renderProductComments(productId);
-            alert('تم نشر تعليقك على المنتج!');
+            if(document.getElementById('controlPanelModal').style.display === 'flex') renderAdminComments();
+            alert('تم نشر تعليقك بنجاح وثبات!');
         }
 
         // إدارة ومراقبة التعليقات وحذفها من الإداري
@@ -1006,12 +1056,10 @@
             if(!tbody) return;
             tbody.innerHTML = '';
             commentsDatabase.forEach(c => {
-                let typeText = c.type === 'store' ? 'المتجر العام' : 'منتج فردي';
                 tbody.innerHTML += `
                     <tr>
-                        <td>${c.name}</td>
-                        <td>${typeText}</td>
-                        <td style="max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${c.text}</td>
+                        <td><strong>${c.name}</strong></td>
+                        <td style="max-width:300px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${c.text}</td>
                         <td>
                             <button class="admin-btn" style="background:#3b82f6;" onclick="editCommentText(${c.id})">تعديل</button>
                             <button class="admin-btn" style="background:#ef4444;" onclick="deleteComment(${c.id})">حذف</button>
@@ -1058,8 +1106,20 @@
         function addToCart(id) {
             const p = productsDatabase.find(item => item.id === id);
             if(!p) return;
+            
+            if(p.stock <= 0 || p.status !== 'available') {
+                return alert('عذراً، هذا المنتج غير متوفر للبيع حالياً!');
+            }
+
             const exist = shoppingCart.find(item => item.id === id);
-            if(exist) { exist.qty++; } else { shoppingCart.push({ ...p, qty: 1 }); }
+            if(exist) { 
+                if(exist.qty >= p.stock) {
+                    return alert('لا يمكنك إضافة كمية أكبر من المتاحة بالمخزن!');
+                }
+                exist.qty++; 
+            } else { 
+                shoppingCart.push({ ...p, qty: 1 }); 
+            }
             saveData();
             alert('تمت الإضافة بنجاح لسلّتك!');
             renderCart();
@@ -1068,6 +1128,12 @@
         function changeQty(id, amt) {
             const item = shoppingCart.find(i => i.id === id);
             if(!item) return;
+            const dbProd = productsDatabase.find(p => p.id === id);
+            
+            if(amt > 0 && dbProd && item.qty >= dbProd.stock) {
+                return alert('وصلت للحد الأقصى للكمية المتوفرة بالمخزن!');
+            }
+
             item.qty += amt;
             if(item.qty <= 0) { shoppingCart = shoppingCart.filter(i => i.id !== id); }
             saveData();
