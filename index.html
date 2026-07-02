@@ -12,6 +12,7 @@
             --primary-blue: #1e40af;
             --text-white: #ffffff;
             --text-gray: #9ca3af;
+            --lightning-color: #00f0ff;
         }
 
         * {
@@ -29,26 +30,48 @@
         body {
             background-color: var(--bg-dark);
             color: var(--text-white);
-            overflow-x: hidden; /* منع الهروب الجانبي تماماً */
+            overflow-x: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        /* شاشة البداية */
+        /* شاشة البداية الاحترافية بتأثير البرق الصاعق */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             background-color: var(--bg-darker);
             display: flex; justify-content: center; align-items: center;
             z-index: 9999;
-            animation: fadeOutSplash 0.5s ease-in-out 2s forwards;
+            overflow: hidden;
         }
         #splash-screen .splash-logo {
-            font-size: 80px; font-weight: 900; color: var(--text-white);
-            animation: pulseLogo 1.5s infinite alternate;
+            font-size: 90px; font-weight: 900; color: var(--text-white);
+            position: relative;
+            text-shadow: 0 0 10px rgba(0, 240, 255, 0.3), 0 0 20px rgba(0, 240, 255, 0.2);
+            animation: pulseLogo 1.2s infinite alternate ease-in-out;
+            z-index: 2;
         }
-        @keyframes pulseLogo { from { transform: scale(0.95); opacity: 0.8; } to { transform: scale(1.05); opacity: 1; } }
-        @keyframes fadeOutSplash { to { opacity: 0; visibility: hidden; } }
+        /* تأثير صاعقة البرق الخلفية خلف الشعار */
+        .lightning-bolt {
+            position: absolute;
+            width: 3px; height: 100%;
+            background: linear-gradient(to bottom, transparent, var(--lightning-color), transparent);
+            opacity: 0;
+            z-index: 1;
+        }
+        .bolt-1 { left: 45%; animation: lightningFlash 2s infinite 0.3s; }
+        .bolt-2 { left: 55%; animation: lightningFlash 2s infinite 1.1s; }
+
+        @keyframes pulseLogo { 
+            from { transform: scale(0.95); text-shadow: 0 0 10px rgba(0,240,255,0.2); } 
+            to { transform: scale(1.05); text-shadow: 0 0 30px var(--lightning-color), 0 0 50px rgba(0,240,255,0.6); } 
+        }
+        @keyframes lightningFlash {
+            0%, 90%, 100% { opacity: 0; transform: scaleY(0); }
+            92% { opacity: 1; transform: scaleY(1); background: #fff; }
+            94% { opacity: 0.5; var(--lightning-color); }
+            96% { opacity: 1; background: #fff; }
+        }
 
         /* الهيدر العلوي */
         header {
@@ -130,15 +153,15 @@
         .main-content { padding: 20px 40px; width: 100%; flex: 1; }
         .section-title { margin: 30px 0 15px 0; font-size: 24px; border-right: 4px solid var(--primary-blue); padding-right: 12px; color: #fff; }
         
+        /* كيبورد خلايا عرض المنتجات المطور والمنظم */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 25px;
             margin-bottom: 50px;
         }
-        @media (min-width: 1200px) {
-            .products-grid { grid-template-columns: repeat(6, 1fr); }
-        }
+        @media (min-width: 768px) { .products-grid { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 1200px) { .products-grid { grid-template-columns: repeat(6, 1fr); } }
 
         .product-card {
             background-color: var(--bg-darker); border: 1px solid rgba(30, 64, 175, 0.2);
@@ -164,7 +187,7 @@
         .add-to-cart-btn:hover { background: #2563eb; }
         .add-to-cart-btn:disabled { background: #374151; color: #9ca3af; cursor: not-allowed; }
 
-        /* التقييمات والتعليقات المبسطة */
+        /* التعليقات والتقييمات المبسطة */
         .comments-section-wrapper { margin-top: 30px; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); width: 100%; max-width: 100%; overflow: hidden; }
         .comments-list { margin-top: 15px; display: flex; flex-direction: column; gap: 12px; }
         .comment-card { display: flex; gap: 15px; background: var(--bg-darker); padding: 12px; border-radius: 6px; align-items: flex-start; position: relative; max-width: 100%; overflow: hidden; }
@@ -196,7 +219,7 @@
         .modal-img { width: 100%; max-height: 280px; object-fit: contain; margin-top: 25px; margin-bottom: 20px; background: #111; border-radius: 6px; }
         .dynamic-row { background: rgba(255,255,255,0.03); border-right: 4px solid var(--primary-blue); padding: 12px; margin-top: 10px; border-radius: 0 5px 5px 0; font-size: 14px; }
 
-        /* لوحة التحكم المنظمة */
+        /* لوحة التحكم المنظمة والمحمية للإداري */
         .admin-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2500; display: none; justify-content: center; align-items: center; padding: 20px; }
         .admin-box { background: var(--bg-dark); padding: 25px; border-radius: 10px; width: 100%; max-width: 750px; max-height: 90vh; overflow-y:auto; border: 1px solid #3b82f6; }
         .admin-section { background: var(--bg-darker); border: 1px solid rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
@@ -211,9 +234,10 @@
         .items-list-table { width: 100%; margin-top: 10px; border-collapse: collapse; font-size: 13px; }
         .items-list-table th, .items-list-table td { padding: 10px; text-align: right; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-        /* الفوتر وشبكة الروابط */
+        /* الفوتر وشبكة الروابط الـ 48 خلية الاحترافية */
         .footer-links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; max-width: 600px; margin: 15px auto 0 auto; }
-        .footer-link-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(30, 64, 175, 0.1); padding: 12px 5px; border-radius: 6px; cursor: pointer; text-align: center; }
+        .footer-link-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(30, 64, 175, 0.1); padding: 12px 5px; border-radius: 6px; cursor: pointer; text-align: center; transition: all 0.3s; }
+        .footer-link-card:hover { border-color: #3b82f6; background: rgba(30, 64, 175, 0.1); }
         .footer-link-card h4 { font-size: 15px; color: #fff; margin-bottom: 3px; }
         .footer-link-card p { font-size: 11px !important; color: var(--text-gray) !important; }
 
@@ -238,7 +262,11 @@
 </head>
 <body>
 
-    <div id="splash-screen"><div class="splash-logo">QR</div></div>
+    <div id="splash-screen">
+        <div class="lightning-bolt bolt-1"></div>
+        <div class="lightning-bolt bolt-2"></div>
+        <div class="splash-logo">QR</div>
+    </div>
 
     <header>
         <div class="header-right">
@@ -258,6 +286,7 @@
     </div>
 
     <div class="sidebar-overlay" id="overlay" onclick="closeAll()"></div>
+    
     <div class="sidebar" id="sidebar">
         <button class="close-sidebar" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
         <div class="sidebar-menu-wrapper">
@@ -457,11 +486,22 @@
     </footer>
 
     <script>
+        // إخفاء شاشة البرق الصاعقة تلقائياً بعد ثانيتين وثلاث أجزاء لضمان استقرار التحميل البصري
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                if (splash) {
+                    splash.style.transition = 'opacity 0.5s ease-out, visibility 0.5s';
+                    splash.style.opacity = '0';
+                    splash.style.visibility = 'hidden';
+                }
+            }, 2300);
+        });
+
         const sidebar = document.getElementById('sidebar');
         const cartSidebar = document.getElementById('cartSidebar');
         const overlay = document.getElementById('overlay');
         
-        // جلب البيانات المخزنة مسبقاً بجهاز المستخدم أو استخدام مصفوفة فارغة
         let sectionsDatabase = JSON.parse(localStorage.getItem('sectionsDatabase')) || [];
         let productsDatabase = JSON.parse(localStorage.getItem('productsDatabase')) || [];
         let linksDatabase = JSON.parse(localStorage.getItem('linksDatabase')) || [];
@@ -486,6 +526,7 @@
         function openLoginModal() { toggleSidebar(); document.getElementById('loginModal').style.display = 'flex'; }
         function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
         
+        // التحقق من صلاحيات الإداري فقط للوصول للوحة التحكم
         function checkAdminLogin() {
             if(document.getElementById('adminUserPass').value === 'فانتو') {
                 closeLoginModal();
@@ -593,7 +634,6 @@
             alert('تم حفظ المنتج بنجاح وتخزينه!');
         }
 
-        // لوحة التحكم المضافة لتعديل وحذف المنتجات وتغيير الكمية
         function renderAdminProductsTable() {
             const tbody = document.getElementById('adminProductsTableBody');
             if(!tbody) return;
@@ -691,11 +731,9 @@
             });
         }
 
-        // إتمام الطلبية ونقصان الكمية تلقائياً من المخزن لكل كرت
         function checkoutOrder() {
             if(shoppingCart.length === 0) return alert('سلتك فارغة لتتم الطلب!');
             
-            // فحص المخزون الفعلي وتحديثه قبل الحفظ
             for(let item of shoppingCart) {
                 let dbProd = productsDatabase.find(p => p.id === item.id);
                 if(dbProd) {
@@ -705,7 +743,6 @@
                 }
             }
 
-            // خصم الكميات من المخزن
             shoppingCart.forEach(item => {
                 let dbProd = productsDatabase.find(p => p.id === item.id);
                 if(dbProd) {
@@ -755,7 +792,6 @@
             renderStoreCommentsSection();
         }
 
-        // إدارة وحسابات الطلبات من جهة الإداري
         function renderAdminOrders() {
             const tbody = document.getElementById('adminOrdersTableBody');
             if(!tbody) return;
@@ -804,7 +840,6 @@
             if(currentSectionFilter === 'orders') renderDisplayArea();
         }
 
-        // تصفية وعرض الأقسام والمشتريات السابقة للمشتري
         function filterBySection(secId) {
             currentSectionFilter = secId;
             closeAll();
@@ -874,7 +909,6 @@
                 prods.forEach(p => {
                     let oldPriceTag = p.oldPrice > 0 ? `<span class="product-old-price">${p.oldPrice} ر.س</span>` : '';
                     
-                    // حساب شارة الحالة والمخزون والتحكم بالزر
                     let badgeHTML = `<span class="badge-status badge-available">متوفر</span>`;
                     let isBtnDisabled = false;
                     if(p.status === 'unavailable' || p.stock <= 0) {
@@ -917,7 +951,6 @@
             }
         }
 
-        // تفاصيل المنتج
         function openProductDetail(id) {
             const p = productsDatabase.find(item => item.id === id);
             if(!p) return;
@@ -975,7 +1008,6 @@
             document.getElementById('productDetailModal').style.display = 'flex';
         }
 
-        // فحص صلاحية التعليق التلقائي
         function checkCommentEligibility(type, targetId = null) {
             let approvedOrders = ordersDatabase.filter(o => o.status === 'completed');
             if(approvedOrders.length === 0) return false;
@@ -983,7 +1015,6 @@
             return existingStoreComments.length < approvedOrders.length;
         }
 
-        // نموذج التعليقات والآراء بأسفل الموقع (تعديل تبسيط كامل للشاشة)
         function renderStoreCommentsSection() {
             const formContainer = document.getElementById('storeCommentFormContainer');
             const listContainer = document.getElementById('storeCommentsList');
@@ -1050,7 +1081,6 @@
             alert('تم نشر تعليقك بنجاح وثبات!');
         }
 
-        // إدارة ومراقبة التعليقات وحذفها من الإداري
         function renderAdminComments() {
             const tbody = document.getElementById('adminCommentsTableBody');
             if(!tbody) return;
@@ -1172,7 +1202,6 @@
             totalVal.innerText = grandTotal + ' ر.س';
         }
 
-        // تشغيل أولي لاسترجاع وبناء الصفحة كاملة
         updateSidebarMenu();
         renderFooterLinks();
         renderDisplayArea();
