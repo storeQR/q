@@ -5,9 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>متجر QR الاحترافي - البرق</title>
     
-    <!-- المكتبات الخارجية: الأيقونات الثابتة والمتحركة -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.lordicon.com/lordicon.js"></script>
+
+    <script>
+        // ================= إعدادات الربط السحابي لمتجر QR والبرق =================
+        const RESTDB_DB_NAME = "qrsto182-"; 
+        const RESTDB_API_KEY = "bc4325fd9ba6815e5be58db0e28119e711d9b";
+        
+        const RESTDB_URL_SECTIONS = `https://${RESTDB_DB_NAME}.restdb.io/rest/sections`;
+        const RESTDB_URL_PRODUCTS = `https://${RESTDB_DB_NAME}.restdb.io/rest/products`;
+        const RESTDB_URL_COMMENTS = `https://${RESTDB_DB_NAME}.restdb.io/rest/comments`;
+        const RESTDB_URL_ORDERS   = `https://${RESTDB_DB_NAME}.restdb.io/rest/orders`;
+        const RESTDB_URL_LINKS    = `https://${RESTDB_DB_NAME}.restdb.io/rest/links`;
+        // =======================================================================
+    </script>
 
     <style>
         :root {
@@ -48,6 +60,7 @@
             display: flex; justify-content: center; align-items: center;
             z-index: 9999;
             overflow: hidden;
+            transition: opacity 0.5s, visibility 0.5s;
         }
         #splash-screen .splash-logo {
             font-size: 90px; font-weight: 900; color: var(--text-white);
@@ -195,11 +208,10 @@
             overflow-x: auto;
         }
 
-        /* المودالات والتحكم الشامل للوحة الإداري */
+        /* Modals and panels */
         .admin-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2500; display: none; justify-content: center; align-items: center; padding: 20px; }
         .admin-box { background: var(--bg-dark); padding: 25px; border-radius: 10px; width: 100%; max-width: 850px; max-height: 90vh; overflow-y: auto; border: 1px solid #3b82f6; box-shadow: 0 0 20px rgba(30, 64, 175, 0.5); }
         
-        /* تقسيم وتبويب أزرار لوحة التحكم لجعلها مبسطة وغير معقدة */
         .admin-tabs-nav { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid #1e40af; padding-bottom: 12px; }
         .tab-nav-btn { background: #111827; color: white; border: 1px solid rgba(255,255,255,0.1); padding: 10px 14px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; transition: all 0.2s; }
         .tab-nav-btn.active, .tab-nav-btn:hover { background: #3b82f6; border-color: #3b82f6; }
@@ -219,7 +231,6 @@
         .items-list-table { width: 100%; margin-top: 10px; border-collapse: collapse; font-size: 13px; }
         .items-list-table th, .items-list-table td { padding: 12px 10px; text-align: right; border-bottom: 1px solid rgba(255,255,255,0.05); }
 
-        /* نافذة مراجعة تفاصيل المنتجات */
         .product-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
         .modal-content { background: var(--bg-darker); width: 100%; max-width: 700px; max-height: 90vh; overflow-y: auto; border-radius: 10px; border: 1px solid var(--primary-blue); padding: 25px; position: relative; }
         .back-modal-btn { position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1); border: none; color: white; font-size: 20px; cursor: pointer; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
@@ -230,12 +241,12 @@
         .comments-section-wrapper { margin-top: 20px; background: rgba(255,255,255,0.01); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); width: 100%; }
         .comments-list { margin-top: 15px; display: flex; flex-direction: column; gap: 12px; }
         .comment-card { display: flex; gap: 15px; background: var(--bg-darker); padding: 12px; border-radius: 6px; align-items: flex-start; }
-        .comment-avatar { width: 45px; height: 45px; border-radius: 50%; background: #333; }
+        .comment-avatar { width: 45px; height: 45px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; color: white; }
         .comment-details { flex: 1; }
         .comment-name { font-weight: bold; font-size: 14px; color: #fff; display: flex; justify-content: space-between; }
         .comment-text { font-size: 13px; color: #e5e7eb; margin-top: 5px; }
 
-        /* الفوتر والروابط المهمة التفاعلية بأسفل الموقع */
+        /* الفوتر والروابط التفاعلية */
         .footer-links-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; width: 100%; max-width: 600px; margin: 15px auto 0 auto; }
         .footer-link-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(30, 64, 175, 0.1); padding: 12px 5px; border-radius: 6px; cursor: pointer; text-align: center; transition: all 0.3s; }
         .footer-link-card:hover { border-color: #3b82f6; background: rgba(30, 64, 175, 0.1); }
@@ -263,7 +274,6 @@
 </head>
 <body>
 
-    <!-- شاشة ترحيب البرق كيو آر الفخمة الثابتة والمصلحة -->
     <div id="splash-screen">
         <div class="lightning-bolt bolt-1"></div>
         <div class="lightning-bolt bolt-2"></div>
@@ -277,7 +287,6 @@
         </div>
         <div class="header-left">
             <button class="cart-btn" onclick="toggleCart()"><i class="fas fa-shopping-cart"></i></button>
-            <!-- الحاوية المخصصة لزر لوحة التحكم تحت السلة تماماً وبأعلى اليسار -->
             <div id="adminQuickControlContainer">
                 <button id="adminQuickControlBtn" onclick="openAdminPanelDirectly()">
                     <i class="fas fa-cog"></i> التحكم بالمتجر
@@ -295,7 +304,6 @@
 
     <div class="sidebar-overlay" id="overlay" onclick="closeAll()"></div>
     
-    <!-- منيو السايدبار الجانبي -->
     <div class="sidebar" id="sidebar">
         <button class="close-sidebar" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
         <div class="sidebar-menu-wrapper">
@@ -311,7 +319,6 @@
         </div>
     </div>
 
-    <!-- سلة المشتريات الجانبية -->
     <div class="cart-sidebar" id="cartSidebar">
         <div class="cart-header">
             <h3>سلة المشتريات</h3>
@@ -331,7 +338,6 @@
         <div id="productsDisplayContainer"></div>
     </main>
 
-    <!-- مودال تسجيل دخول الإداري -->
     <div class="admin-modal" id="loginModal">
         <div class="admin-box" style="max-width: 400px;">
             <h3 style="margin-bottom: 20px; text-align: center;">سجل الدخول كإداري</h3>
@@ -344,12 +350,10 @@
         </div>
     </div>
 
-    <!-- لوحة التحكم الاحترافية والمنظمة جداً (المقسمة لتبويبات منفصلة منعا للتعقيد) -->
     <div class="admin-modal" id="controlPanelModal">
         <div class="admin-box">
             <h2 style="color: #00f0ff; margin-bottom: 25px; text-align: center; text-shadow: 0 0 10px rgba(0,240,255,0.3);">لوحة الإدارة والأقسام الذكية</h2>
             
-            <!-- نظام تبويبات منفصل وواضح (قسم قسم) لتنظيم اللوحة تماماً -->
             <div class="admin-tabs-nav">
                 <button class="tab-nav-btn active" onclick="switchAdminTab('tab-orders')">📋 طلبات المعالجة والمخزن</button>
                 <button class="tab-nav-btn" onclick="switchAdminTab('tab-products')">📦 قائمة وتعديل المنتجات</button>
@@ -359,7 +363,6 @@
                 <button class="tab-nav-btn" onclick="switchAdminTab('tab-links')">🔗 روابط الفوتر الستة</button>
             </div>
 
-            <!-- 1. تبويب إدارة الطلبات وتنفيذها لخصم المخزن -->
             <div class="admin-section active" id="tab-orders">
                 <h4><i class="fas fa-cash-register"></i> طلبات العملاء (ينقص المخزن عند الضغط على قبول فقط)</h4>
                 <div style="overflow-x: auto;">
@@ -370,7 +373,7 @@
                                 <th>تفاصيل المنتجات</th>
                                 <th>الإجمالي</th>
                                 <th>الحالة الحالية</th>
-                                <th>تحديث الإداري</th>
+                                <th>إجراء</th>
                             </tr>
                         </thead>
                         <tbody id="adminOrdersTableBody"></tbody>
@@ -378,7 +381,6 @@
                 </div>
             </div>
 
-            <!-- 2. تبويب عرض وتعديل المنتجات والمخزون الحالي -->
             <div class="admin-section" id="tab-products">
                 <h4><i class="fas fa-boxes"></i> المنتجات الحالية المتاحة بالعرض</h4>
                 <div style="overflow-x: auto;">
@@ -397,35 +399,32 @@
                 </div>
             </div>
 
-            <!-- 3. تبويب إضافة منتج جديد ودعم الأيقونات المتحركة -->
             <div class="admin-section" id="tab-add-product">
                 <h4><i class="fas fa-plus-circle"></i> إضافة منتج جديد مدعوم كلياً بالروابط والأيقونات</h4>
                 
-                <!-- صندوق مساعدة لإدراج أكواد الأيقونات المتحركة التفاعلية اللورد آيكون -->
                 <div class="lordicon-helper-box">
                     <strong>💡 دليلك لإدراج أيقونات متحركة فخمة (انسخ الكود وضعه بداخل أسطر التفاصيل أو الوصف):</strong>
                     <div>أيقونة البرق المتحرك: <span class="code-snippet">&lt;lord-icon src="https://cdn.lordicon.com/hdiorgfg.json" trigger="loop" colors="primary:#00f0ff" style="width:30px;height:30px"&gt;&lt;/lord-icon&gt;</span></div>
                     <div>أيقونة سلة مشتريات متحركة: <span class="code-snippet">&lt;lord-icon src="https://cdn.lordicon.com/odavpkmb.json" trigger="loop" colors="primary:#3b82f6" style="width:30px;height:30px"&gt;&lt;/lord-icon&gt;</span></div>
-                    <div>أيقونة الماسة/مجوهرات متحركة: <span class="code-snippet">&lt;lord-icon src="https://cdn.lordicon.com/amjaykqb.json" trigger="loop" colors="primary:#ffd700" style="width:30px;height:30px"&gt;&lt;/lord-icon&gt;</span></div>
                 </div>
 
                 <div class="form-group"><label>القسم الملحق به</label><select id="pSectionSelect"></select></div>
-                <div class="form-group"><label>صورة المنتج من جهازك</label><input type="file" id="pLocalImg" accept="image/*"></div>
+                <div class="form-group"><label>رابط صورة المنتج المباشر (URL)</label><input type="text" id="pImgUrl" placeholder="أدخل رابط الصورة السحابي..."></div>
                 <div class="form-group"><label>اسم المنتج</label><input type="text" id="pTitle"></div>
-                <div class="form-group"><label>الوصف القصير السريع (يدعم أكواد الأيقونات والروابط)</label><textarea id="pDesc" rows="2"></textarea></div>
+                <div class="form-group"><label>الوصف القصير السريع</label><textarea id="pDesc" rows="2"></textarea></div>
                 
                 <div class="form-group">
-                    <label>أسطر الملاحظات والتفاصيل (تظهر داخل بطاقة تفاصيل المنتج الفورية - تدعم أكواد HTML والروابط)</label>
+                    <label>أسطر الملاحظات والتفاصيل (تظهر داخل بطاقة التفاصيل الفورية)</label>
                     <div id="dynamicDetailsInputs">
-                        <input type="text" class="prod-detail-line" placeholder="مثال: <lord-icon ...></lord-icon> كود تفعيل فوري وآمن" style="margin-bottom:8px;">
+                        <input type="text" class="prod-detail-line" placeholder="مثال: كود تفعيل فوري وآمن" style="margin-bottom:8px;">
                     </div>
-                    <button class="add-more-btn" onclick="addMoreDetailField()"><i class="fas fa-plus"></i> إضافة سطر تفاصيل وملاحظات متحرك آخر</button>
+                    <button class="add-more-btn" onclick="addMoreDetailField()"><i class="fas fa-plus"></i> إضافة سطر تفاصيل آخر</button>
                 </div>
 
                 <div class="form-group" style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap:10px;">
                     <div><label>السعر (ر.س)</label><input type="number" id="pPrice" value="0"></div>
-                    <div><label>السعر القديم المشطوب</label><input type="number" id="pOldPrice" value="0"></div>
-                    <div><label>الكمية المتوفرة بالمخزن</label><input type="number" id="pStock" value="10"></div>
+                    <div><label>السعر القديم</label><input type="number" id="pOldPrice" value="0"></div>
+                    <div><label>الكمية بالمخزن</label><input type="number" id="pStock" value="10"></div>
                 </div>
                 <div class="form-group">
                     <label>حالة التوفر</label>
@@ -438,40 +437,32 @@
                 <button class="admin-btn" style="width:100%; padding:12px;" onclick="addNewProductItem()">نشر وعرض المنتج بالمتجر فوراً</button>
             </div>
 
-            <!-- 4. تبويب إنشاء وحذف الأقسام بمرونة تامة -->
             <div class="admin-section" id="tab-sections">
                 <h4><i class="fas fa-folder-open"></i> التحكم في أقسام متجر QR والبرق</h4>
                 <div class="form-group">
-                    <label>اسم القسم الجديد المراد إنشاؤه</label>
-                    <input type="text" id="newSecTitle" placeholder="مثال: خدمات فورتنايت، بطاقات رقمية...">
+                    <label>اسم القسم الجديد</label>
+                    <input type="text" id="newSecTitle" placeholder="مثال: خدمات فورتنايت...">
                     <button class="admin-btn" style="margin-top:10px;" onclick="addNewSection()">إنشاء وتأكيد القسم</button>
                 </div>
-                <h5 style="margin-top:20px; color:#9ca3af;">الأقسام النشطة الحالية بالمتجر (يمكنك حذف أي قسم):</h5>
-                <div style="overflow-x: auto; margin-top: 10px;">
-                    <table class="items-list-table">
-                        <thead><tr><th>اسم القسم الحركي</th><th>إجراء حذف آمن للقسم بالكامل</th></tr></thead>
-                        <tbody id="adminSectionsTableBody"></tbody>
-                    </table>
-                </div>
+                <table class="items-list-table">
+                    <thead><tr><th>اسم القسم</th><th>إجراء حذف آمن</th></tr></thead>
+                    <tbody id="adminSectionsTableBody"></tbody>
+                </table>
             </div>
 
-            <!-- 5. تبويب مراجعات وتعليقات الزوار والعملاء بالفوتر -->
             <div class="admin-section" id="tab-comments">
-                <h4><i class="fas fa-comment-dots"></i> الإشراف التام وحذف التقييمات العشوائية أو المسيئة</h4>
-                <div style="overflow-x: auto;">
-                    <table class="items-list-table">
-                        <thead><tr><th>اسم العميل</th><th>نص المراجعة والتقييم</th><th>إجراء شطب التقييم</th></tr></thead>
-                        <tbody id="adminCommentsTableBody"></tbody>
-                    </table>
-                </div>
+                <h4><i class="fas fa-comment-dots"></i> الإشراف التام وحذف التقييمات</h4>
+                <table class="items-list-table">
+                    <thead><tr><th>اسم العميل</th><th>نص المراجعة</th><th>إجراء</th></tr></thead>
+                    <tbody id="adminCommentsTableBody"></tbody>
+                </table>
             </div>
 
-            <!-- 6. تبويب روابط الفوتر الستة المهمة والمحتوى الداخلي لها -->
             <div class="admin-section" id="tab-links">
-                <h4><i class="fas fa-link"></i> التحكم بالروابط الستة في الفوتر السفلي ومحتوياتها التفاعلية</h4>
-                <div class="form-group"><label>عنوان الرابط السفلي</label><input type="text" id="linkTitle" placeholder="مثال: شروط الضمان والتعويض"></div>
-                <div class="form-group"><label>وصف توضيحي مصغر للرابط</label><input type="text" id="linkDesc" placeholder="مثال: اضغط لقراءة شروط متجرنا"></div>
-                <div class="form-group"><label>المحتوى الداخلي الكامل للرابط عند الضغط عليه (يدعم أكواد الأيقونات المتحركة والروابط)</label><textarea id="linkContent" rows="4"></textarea></div>
+                <h4><i class="fas fa-link"></i> التحكم بالروابط الستة في الفوتر العلوي ومحتوياتها</h4>
+                <div class="form-group"><label>عنوان الرابط السفلي</label><input type="text" id="linkTitle"></div>
+                <div class="form-group"><label>وصف توضيحي مصغر</label><input type="text" id="linkDesc"></div>
+                <div class="form-group"><label>المحتوى الداخلي الكامل للرابط عند الضغط عليه</label><textarea id="linkContent" rows="4"></textarea></div>
                 <button class="admin-btn" style="background:#3b82f6; width:100%;" onclick="addNewImportantLink()">تثبيت ونشر الرابط بالفوتر</button>
                 
                 <table class="items-list-table" style="margin-top:20px;">
@@ -480,14 +471,12 @@
                 </table>
             </div>
 
-            <!-- زر إغلاق لوحة التحكم وحفظ تعديلات الجيت هاب والمخزن بالكامل -->
             <div style="margin-top: 25px;">
-                <button class="admin-btn" style="background:#ef4444; width:100%; padding:14px; font-size:16px;" onclick="closeControlPanel()">إغلاق وحفظ كافة البيانات المعدلة</button>
+                <button class="admin-btn" style="background:#ef4444; width:100%; padding:14px; font-size:16px;" onclick="closeControlPanel()">إغلاق وحفظ البيانات</button>
             </div>
         </div>
     </div>
 
-    <!-- مودال عرض تفاصيل وملاحظات المنتج الفورية للعميل -->
     <div class="product-modal" id="productDetailModal">
         <div class="modal-content">
             <button class="back-modal-btn" onclick="closeProductDetail()"><i class="fas fa-arrow-right"></i></button>
@@ -495,109 +484,108 @@
         </div>
     </div>
 
-    <!-- الفوتر السفلي الثابت والشغال بالسكرول المرن دائماً لرؤية الضمان والموثوقية والتقييمات -->
     <footer>
         <div class="footer-grid">
             <div class="footer-item">
                 <h3>ضمان ذهبي <i class="fas fa-award gold-icon"></i></h3>
-                <p>نقدم ضماناً ذهبياً متكاملاً على جميع الخدمات والبطاقات والمبيعات المتاحة لضمان راحة بالك.</p>
-            </div>
-            <div class="footer-item">
-                <h3>موثوقية رسمية ومضمونة <i class="fas fa-check-circle verified-icon"></i></h3>
-                <p>نحن نوثق أعمالنا بوثائق العمل الحر الرسمية لنضمن للعميل أماناً بنسبة 100% في كافة المعاملات المالية والخدمية.</p>
+                <p>نقدم ضماناً ذهبياً متكاملاً على جميع الخدمات والبطاقات والمبيعات المتاحة.</p>
             </div>
 
-            <div class="footer-item" style="max-width:100%;">
+            <div class="footer-item" style="width: 100%;">
+                <h3 style="font-size:18px; color:var(--text-gray);">أقسام ومعلومات هامة تهمك</h3>
+                <div class="footer-links-grid" id="footerLinksContainer"></div>
+            </div>
+
+            <div class="footer-item">
                 <h3>آراء وتقييمات عملائنا الأوفياء <i class="fas fa-star" style="color:#ffd700;"></i></h3>
-                <div class="comments-section-wrapper" id="storeCommentsWrapper">
+                <div class="comments-section-wrapper">
                     <div id="storeCommentFormContainer"></div>
                     <div class="comments-list" id="storeCommentsList"></div>
                 </div>
             </div>
 
-            <div class="footer-item">
-                <h3>الروابط المهمة بالمتجر <i class="fas fa-external-link-alt" style="color:#3b82f6;"></i></h3>
-                <div class="footer-links-grid" id="footerLinksGrid"></div>
-            </div>
-            
-            <div class="whatsapp-section">
-                <a href="https://wa.me/966545988301" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp" style="font-size: 24px;"></i> تواصل مباشر واتساب</a>
-            </div>
-            
-            <div class="rights-text">جميع الحقوق محفوظة ومحمية لمتجر كيو آر © 2026</div>
+            <a href="https://wa.me/966545988301" target="_blank" class="whatsapp-btn"><i class="fab fa-whatsapp"></i> تواصل مباشر واتساب</a>
+            <div class="rights-text">جميع الحقوق محفوظة ومتزامنة سحابياً لمتجر كيو آر © 2026</div>
         </div>
     </footer>
 
-    <!-- سكربت جافا سكربت الشامل والذكي لمعالجة المنطق بالكامل -->
     <script>
         window.addEventListener('DOMContentLoaded', () => {
-            // إخفاء شاشة ترحيب البرق بسلاسة تامة بعد ثانيتين ونصف
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                if (splash) {
-                    splash.style.transition = 'opacity 0.6s ease-out, visibility 0.6s';
-                    splash.style.opacity = '0';
-                    splash.style.visibility = 'hidden';
-                }
-            }, 2500);
-            
-            if(sectionsDatabase.length === 0) {
-                sectionsDatabase = ["بطاقات رقمية", "شدات ألعاب", "حسابات منوعة"];
-                saveData();
-            }
-            renderStoreFront();
+                if (splash) { splash.style.opacity = '0'; splash.style.visibility = 'hidden'; }
+            }, 2300);
+            loadGlobalData();
         });
 
         const sidebar = document.getElementById('sidebar');
         const cartSidebar = document.getElementById('cartSidebar');
         const overlay = document.getElementById('overlay');
         
-        let sectionsDatabase = JSON.parse(localStorage.getItem('sectionsDatabase')) || [];
-        let productsDatabase = JSON.parse(localStorage.getItem('productsDatabase')) || [];
-        let linksDatabase = JSON.parse(localStorage.getItem('linksDatabase')) || [];
-        let ordersDatabase = JSON.parse(localStorage.getItem('ordersDatabase')) || [];
-        let commentsDatabase = JSON.parse(localStorage.getItem('commentsDatabase')) || [];
-        let shoppingCart = JSON.parse(localStorage.getItem('shoppingCart')) || [];
+        let sectionsDatabase = [];
+        let productsDatabase = [];
+        let ordersDatabase = [];
+        let commentsDatabase = [];
+        let linksDatabase = [];
+        let shoppingCart = [];
         let currentSectionFilter = 'all';
 
-        function saveData() {
-            localStorage.setItem('sectionsDatabase', JSON.stringify(sectionsDatabase));
-            localStorage.setItem('productsDatabase', JSON.stringify(productsDatabase));
-            localStorage.setItem('linksDatabase', JSON.stringify(linksDatabase));
-            localStorage.setItem('ordersDatabase', JSON.stringify(ordersDatabase));
-            localStorage.setItem('commentsDatabase', JSON.stringify(commentsDatabase));
-            localStorage.setItem('shoppingCart', JSON.stringify(shoppingCart));
+        function makeRequest(url, method = 'GET', data = null) {
+            const options = {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-apikey': RESTDB_API_KEY,
+                    'Cache-Control': 'no-cache'
+                }
+            };
+            if (data) options.body = JSON.stringify(data);
+            return fetch(url, options).then(res => res.json());
         }
 
-        function toggleSidebar() { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); cartSidebar.classList.remove('active'); }
-        function toggleCart() { cartSidebar.classList.toggle('active'); overlay.classList.toggle('active'); sidebar.classList.remove('active'); renderCart(); }
-        function closeAll() { sidebar.classList.remove('active'); cartSidebar.classList.remove('active'); overlay.classList.remove('active'); }
+        function loadGlobalData() {
+            Promise.all([
+                makeRequest(RESTDB_URL_SECTIONS),
+                makeRequest(RESTDB_URL_PRODUCTS),
+                makeRequest(RESTDB_URL_COMMENTS),
+                makeRequest(RESTDB_URL_ORDERS),
+                makeRequest(RESTDB_URL_LINKS)
+            ]).then(([sec, prod, comm, ord, lnk]) => {
+                sectionsDatabase = Array.isArray(sec) ? sec : [];
+                productsDatabase = Array.isArray(prod) ? prod : [];
+                commentsDatabase = Array.isArray(comm) ? comm : [];
+                ordersDatabase = Array.isArray(ord) ? ord : [];
+                linksDatabase = Array.isArray(lnk) ? lnk : [];
+                renderStoreFront();
+            }).catch(err => console.error("خطأ مزامنة RestDB:", err));
+        }
 
+        function toggleSidebar() { sidebar.classList.toggle('active'); overlay.classList.toggle('active'); }
+        function toggleCart() { cartSidebar.classList.toggle('active'); overlay.classList.toggle('active'); renderCart(); }
+        function closeAll() { sidebar.classList.remove('active'); cartSidebar.classList.remove('active'); overlay.classList.remove('active'); }
         function openLoginModal() { toggleSidebar(); document.getElementById('loginModal').style.display = 'flex'; }
-        function closeLoginModal() { document.getElementById('loginModal').style.display = 'none'; }
+        function closeLoginModal() { document.getElementById('loginModal').style.none = 'none'; document.getElementById('loginModal').style.display = 'none'; }
         
-        // التحقق من الإداري وإظهار زر التحكم بأعلى اليسار تحت السلة فوراً دون تعقيد
         function checkAdminLogin() {
             if(document.getElementById('adminUserPass').value === 'فانتو') {
                 closeLoginModal();
                 document.getElementById('adminQuickControlContainer').style.display = 'block';
                 openAdminPanelDirectly();
-            } else { alert('الباسورد السري المدخل غير صحيح!'); }
+            } else { alert('كلمة المرور خاطئة!'); }
         }
 
         function openAdminPanelDirectly() {
             document.getElementById('controlPanelModal').style.display = 'flex';
             updateSectionSelect();
-            renderAdminLinksTable();
             renderAdminOrders();
             renderAdminComments();
             renderAdminProductsTable();
             renderAdminSectionsTable();
+            renderAdminLinksTable();
         }
 
         function closeControlPanel() { document.getElementById('controlPanelModal').style.display = 'none'; }
 
-        // التبديل النظيف والمبسط بين تبويبات الإدارة (قسم قسم منعا للتعقيد)
         function switchAdminTab(tabId) {
             document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
             document.querySelectorAll('.tab-nav-btn').forEach(btn => btn.classList.remove('active'));
@@ -606,522 +594,59 @@
         }
 
         function addMoreDetailField() {
-            const container = document.getElementById('dynamicDetailsInputs');
+            const div = document.getElementById('dynamicDetailsInputs');
             const input = document.createElement('input');
             input.type = 'text';
             input.className = 'prod-detail-line';
-            input.placeholder = `سطر تفاصيل أو كود أيقونة متحركة إضافي...`;
-            input.style.cssText = "margin-top:8px; width:100%; padding:10px; background:var(--bg-dark); border:1px solid rgba(255,255,255,0.1); color:white; border-radius:5px; outline:none;";
-            container.appendChild(input);
+            input.placeholder = 'سطر تفاصيل إضافي...';
+            input.style.marginBottom = '8px';
+            div.appendChild(input);
         }
 
-        // الأقسام وإدارتها وحذفها الآمن
         function addNewSection() {
-            const t = document.getElementById('newSecTitle').value.trim();
-            if(!t) return;
-            if(sectionsDatabase.includes(t)) { alert('القسم مدرج ومتواجد مسبقاً!'); return; }
-            sectionsDatabase.push(t);
-            saveData();
-            document.getElementById('newSecTitle').value = '';
-            updateSectionSelect();
-            renderAdminSectionsTable();
-            renderStoreFront();
+            const title = document.getElementById('newSecTitle').value.trim();
+            if(!title) return;
+            makeRequest(RESTDB_URL_SECTIONS, 'POST', { title }).then(() => {
+                document.getElementById('newSecTitle').value = '';
+                loadGlobalData();
+            });
         }
 
-        function deleteSection(index) {
-            const secName = sectionsDatabase[index];
-            const hasProducts = productsDatabase.some(p => p.section === secName);
-            if(hasProducts) {
-                if(!confirm(`تنبيه: القسم [${secName}] بداخلة منتجات معروضة حالياً! في حال حذفه سيتم التخلص من المنتجات التابعة له آلياً، هل توافق؟`)) return;
-                productsDatabase = productsDatabase.filter(p => p.section !== secName);
-            }
-            sectionsDatabase.splice(index, 1);
-            saveData();
-            renderAdminSectionsTable();
-            updateSectionSelect();
-            renderAdminProductsTable();
-            renderStoreFront();
+        function deleteSection(id) {
+            makeRequest(`${RESTDB_URL_SECTIONS}/${id}`, 'DELETE').then(() => loadGlobalData());
         }
 
         function renderAdminSectionsTable() {
             const tbody = document.getElementById('adminSectionsTableBody'); tbody.innerHTML = '';
-            sectionsDatabase.forEach((sec, idx) => {
-                tbody.innerHTML += `<tr><td style="font-weight:bold; color:#fff;">${sec}</td><td><button class="admin-btn-danger" onclick="deleteSection(${idx})"><i class="fas fa-trash-alt"></i> حذف القسم كلياً</button></td></tr>`;
+            sectionsDatabase.forEach(s => {
+                tbody.innerHTML += `<tr><td>${s.title}</td><td><button class="admin-btn-danger" onclick="deleteSection('${s._id}')">حذف</button></td></tr>`;
             });
         }
 
         function updateSectionSelect() {
             const select = document.getElementById('pSectionSelect'); select.innerHTML = '';
-            sectionsDatabase.forEach(s => { select.innerHTML += `<option value="${s}">${s}</option>`; });
+            sectionsDatabase.forEach(s => { select.innerHTML += `<option value="${s.title}">${s.title}</option>`; });
         }
 
-        // رفع وإضافة ونشر المنتجات الجديدة
         function addNewProductItem() {
             const title = document.getElementById('pTitle').value.trim();
             const desc = document.getElementById('pDesc').value.trim();
             const price = parseFloat(document.getElementById('pPrice').value) || 0;
             const oldPrice = parseFloat(document.getElementById('pOldPrice').value) || 0;
             const stock = parseInt(document.getElementById('pStock').value) || 0;
-            const status = document.getElementById('pStatus').value;
             const section = document.getElementById('pSectionSelect').value;
-            const fileInput = document.getElementById('pLocalImg');
+            const imgUrl = document.getElementById('pImgUrl').value.trim();
+            const status = document.getElementById('pStatus').value;
 
-            if(!title) { alert('الرجاء تعيين اسم للمنتج الجديد!'); return; }
+            const detailsLines = [];
+            document.querySelectorAll('.prod-detail-line').forEach(input => {
+                if(input.value.trim()) detailsLines.push(input.value.trim());
+            });
 
-            const lines = [];
-            document.querySelectorAll('.prod-detail-line').forEach(inp => { if(inp.value.trim()) lines.push(inp.value.trim()); });
+            if(!title) return alert('يرجى كتابة الاسم');
 
-            const proceedSave = (imgData) => {
-                const newProd = {
-                    id: 'PROD-' + Math.floor(100000 + Math.random() * 900000),
-                    title, desc, price, oldPrice, stock, status, section,
-                    image: imgData || 'https://via.placeholder.com/180',
-                    details: lines
-                };
-                productsDatabase.push(newProd);
-                saveData();
-                alert('تم حفظ ونشر المنتج الجديد بنجاح فوري!');
-                
+            const item = { title, desc, price, oldPrice, stock, section, status, details: detailsLines, image: imgUrl || 'https://via.placeholder.com/180' };
+            makeRequest(RESTDB_URL_PRODUCTS, 'POST', item).then(() => {
+                alert('تم حفظ ونشر المنتج بنجاح سحابياً للكل!');
                 document.getElementById('pTitle').value = '';
-                document.getElementById('pDesc').value = '';
-                document.getElementById('pPrice').value = '0';
-                document.getElementById('pOldPrice').value = '0';
-                document.getElementById('pStock').value = '10';
-                document.getElementById('dynamicDetailsInputs').innerHTML = '<input type="text" class="prod-detail-line" placeholder="سطر تفاصيل وملاحظات متحرك" style="margin-bottom:8px; width:100%; padding:10px; background:var(--bg-dark); border:1px solid rgba(255,255,255,0.1); color:white; border-radius:5px;">';
-                fileInput.value = '';
-
-                renderAdminProductsTable();
-                renderStoreFront();
-            };
-
-            if(fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) { proceedSave(e.target.result); };
-                reader.readAsDataURL(fileInput.files[0]);
-            } else { proceedSave(null); }
-        }
-
-        function renderAdminProductsTable() {
-            const tbody = document.getElementById('adminProductsTableBody'); tbody.innerHTML = '';
-            productsDatabase.forEach((p, index) => {
-                tbody.innerHTML += `
-                    <tr>
-                        <td>${p.title}</td>
-                        <td style="color:#3b82f6; font-weight:bold;">${p.price} ر.س</td>
-                        <td><input type="number" value="${p.stock}" style="width:65px; padding:5px; background:#111; color:white; border:1px solid #333;" onchange="updateProductStockDirect(${index}, this.value)"></td>
-                        <td>
-                            <select style="padding:4px; background:#111; color:white; border:1px solid #333;" onchange="updateProductStatusDirect(${index}, this.value)">
-                                <option value="available" ${p.status==='available'?'selected':''}>متوفر</option>
-                                <option value="unavailable" ${p.status==='unavailable'?'selected':''}>غير متوفر</option>
-                                <option value="later" ${p.status==='later'?'selected':''}>قريباً</option>
-                            </select>
-                        </td>
-                        <td><button class="admin-btn-danger" onclick="deleteProductItem(${index})">حذف</button></td>
-                    </tr>
-                `;
-            });
-        }
-        function updateProductStockDirect(idx, val) { productsDatabase[idx].stock = parseInt(val) || 0; saveData(); renderStoreFront(); }
-        function updateProductStatusDirect(idx, val) { productsDatabase[idx].status = val; saveData(); renderStoreFront(); }
-        function deleteProductItem(idx) { productsDatabase.splice(idx, 1); saveData(); renderAdminProductsTable(); renderStoreFront(); }
-
-        // روابط الفوتر الستة الفخمة والمحتوى
-        function addNewImportantLink() {
-            const title = document.getElementById('linkTitle').value.trim();
-            const desc = document.getElementById('linkDesc').value.trim();
-            const content = document.getElementById('linkContent').value.trim();
-            if(!title) return;
-            if(linksDatabase.length >= 6) { alert('الحد الأقصى للروابط المهمة بالأسفل هو 6 فقط تماشياً مع التصميم الـ Grid!'); return; }
-            linksDatabase.push({ title, desc, content });
-            saveData();
-            document.getElementById('linkTitle').value = '';
-            document.getElementById('linkDesc').value = '';
-            document.getElementById('linkContent').value = '';
-            renderAdminLinksTable();
-            renderStoreFront();
-        }
-        function renderAdminLinksTable() {
-            const tbody = document.getElementById('adminLinksTableBody'); tbody.innerHTML = '';
-            linksDatabase.forEach((l, i) => {
-                tbody.innerHTML += `<tr><td>${l.title}</td><td><button class="admin-btn-danger" onclick="deleteLinkItem(${i})">إزالة</button></td></tr>`;
-            });
-        }
-        function deleteLinkItem(i) { linksDatabase.splice(i,1); saveData(); renderAdminLinksTable(); renderStoreFront(); }
-
-        // 🛠️ منطق المخزن الحقيقي والصارم بناءً على طلبك: المخزن لا ينقص عند الشراء، ينقص فقط عند الضغط على زر "تم قبول وتفعيل الطلب" باللوحة!
-        function renderAdminOrders() {
-            const tbody = document.getElementById('adminOrdersTableBody'); tbody.innerHTML = '';
-            ordersDatabase.forEach((o, i) => {
-                let pText = o.items.map(it => `${it.title} (الكمية: ${it.qty})`).join(' ، ');
-                tbody.innerHTML += `
-                    <tr>
-                        <td style="font-weight:bold; color:#00f0ff;">${o.id}</td>
-                        <td>${pText}</td>
-                        <td style="color:#22c55e; font-weight:bold;">${o.total} ر.س</td>
-                        <td><span style="padding:4px 8px; border-radius:4px; font-weight:bold; background:${o.status==='قيد الانتظار'?'#f59e0b':o.status==='تم القبول والخصم'?'#22c55e':'#ef4444'};">${o.status}</span></td>
-                        <td>
-                            <button class="admin-btn" style="background:#22c55e; font-size:12px;" onclick="processAdminOrderAccept(${i})">✔️ تم قبول وتفعيل الطلبية (خصم المخزن الآن)</button>
-                            <button class="admin-btn" style="background:#ef4444; font-size:12px; margin-top:3px;" onclick="changeOrderStatusOnly(${i}, 'طلب مرفوض / ملغي')">❌ رفض الطلب</button>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        // دالة قبول الطلب والخصم الفعلي من المخزن بعد التواصل والدفع
-        function processAdminOrderAccept(idx) {
-            const order = ordersDatabase[idx];
-            if(order.status === 'تم القبول والخصم') { alert('هذا الطلب تم قبوله وخصمه مسبقاً من المخزن بالفعل!'); return; }
-
-            let outOfStockError = false;
-            let errorItemName = '';
-
-            // خطوة أولى: التأكد من توفر الكمية بالمخزن للمنتجات قبل الخصم
-            order.items.forEach(orderedItem => {
-                const product = productsDatabase.find(p => p.id === orderedItem.id);
-                if(!product || product.stock < orderedItem.qty) {
-                    outOfStockError = true;
-                    errorItemName = orderedItem.title;
-                }
-            });
-
-            if(outOfStockError) {
-                alert(`خطأ: لا يمكن قبول الطلب لأن المنتج [${errorItemName}] كميته بالمخزن أقل من المطلوب حالياً! قم بزيادة مخزنه أولاً.`);
-                return;
-            }
-
-            // خطوة ثانية: خصم الكمية من المخزن الفعلي وتغيير حالة الطلب
-            order.items.forEach(orderedItem => {
-                const product = productsDatabase.find(p => p.id === orderedItem.id);
-                if(product) {
-                    product.stock -= orderedItem.qty; // خصم الكمية من المخزن الآن فوراً
-                    if(product.stock <= 0) { product.status = 'unavailable'; }
-                }
-            });
-
-            order.status = 'تم القبول والخصم';
-            saveData();
-            renderAdminOrders();
-            renderAdminProductsTable();
-            renderStoreFront();
-            alert(`تم تأكيد الطلب [${order.id}] بنجاح، وتفعيل الخدمة، وخصم الكميات من المخزن تلقائياً!`);
-        }
-
-        function changeOrderStatusOnly(idx, statusText) {
-            ordersDatabase[idx].status = statusText;
-            saveData();
-            renderAdminOrders();
-            renderStoreFront();
-        }
-
-        function renderAdminComments() {
-            const tbody = document.getElementById('adminCommentsTableBody'); tbody.innerHTML = '';
-            commentsDatabase.forEach((c, i) => {
-                tbody.innerHTML += `<tr><td>${c.name}</td><td>${c.text}</td><td><button class="admin-btn-danger" onclick="deleteCommentItem(${i})">شطب</button></td></tr>`;
-            });
-        }
-        function deleteCommentItem(i) { commentsDatabase.splice(i,1); saveData(); renderAdminComments(); renderStoreFront(); }
-
-        // رندر وعرض واجهة المتجر والفلترة الفورية والسكرول المرن المفتوح
-        function renderStoreFront() {
-            const menu = document.getElementById('sidebarMenu');
-            menu.innerHTML = `
-                <li><a href="#" onclick="filterBySection('all')"><i class="fas fa-home" style="margin-left: 10px;"></i> الرئيسية (كل المنتجات)</a></li>
-                <li><a href="#" onclick="filterBySection('orders')"><i class="fas fa-history" style="margin-left: 10px;"></i> طلباتي ومشترياتي ومتابعتها</a></li>
-            `;
-            sectionsDatabase.forEach(s => {
-                menu.innerHTML += `<li><a href="#" onclick="filterBySection('${s}')"><i class="fas fa-folder" style="margin-left: 10px;"></i> ${s}</a></li>`;
-            });
-
-            const footerGrid = document.getElementById('footerLinksGrid'); footerGrid.innerHTML = '';
-            linksDatabase.slice(0, 6).forEach(l => {
-                footerGrid.innerHTML += `
-                    <div class="footer-link-card" onclick="viewLinkModalContent('${escape(l.title)}', '${escape(l.content)}')">
-                        <h4>${l.title}</h4>
-                        <p>${l.desc || ''}</p>
-                    </div>
-                `;
-            });
-
-            const commList = document.getElementById('storeCommentsList'); commList.innerHTML = '';
-            commentsDatabase.forEach(c => {
-                let stars = '<i class="fas fa-star"></i>'.repeat(c.rating);
-                commList.innerHTML += `
-                    <div class="comment-card">
-                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed=${c.name}" class="comment-avatar">
-                        <div class="comment-details">
-                            <div class="comment-name"><span>${c.name}</span> <div class="stars-container" style="color:#ffd700;">${stars}</div></div>
-                            <div class="comment-text">${c.text}</div>
-                        </div>
-                    </div>
-                `;
-            });
-
-            const formCont = document.getElementById('storeCommentFormContainer');
-            formCont.innerHTML = `
-                <div style="display:flex; flex-direction:column; gap:10px; background:rgba(0,0,0,0.2); padding:12px; border-radius:6px;">
-                    <input type="text" id="newCommName" placeholder="اكتب اسمك المستعار الكريم..." style="padding:8px; background:#111; border:1px solid #333; color:white; border-radius:4px;">
-                    <textarea id="newCommText" rows="2" placeholder="ما هو رأيك الصادق في خدمات متجرنا وتفعيل البرق؟..." style="padding:8px; background:#111; border:1px solid #333; color:white; border-radius:4px;"></textarea>
-                    <div style="display:flex; align-items:center; gap:10px;">
-                        <span style="font-size:13px; color:#9ca3af;">التقييم بالنجمات:</span>
-                        <select id="newCommRate" style="padding:5px; background:#111; color:white; border:1px solid #333;">
-                            <option value="5">⭐⭐⭐⭐⭐ ممتاز جداً</option>
-                            <option value="4">⭐⭐⭐⭐ جيد جداً</option>
-                            <option value="3">⭐⭐⭐ متوسط</option>
-                        </select>
-                        <button class="admin-btn" style="margin-right:auto;" onclick="submitStoreComment()">إرسال التقييم علناً</button>
-                    </div>
-                </div>
-            `;
-
-            if(currentSectionFilter === 'orders') {
-                document.getElementById('mainSearchContainer').style.display = 'none';
-                renderClientOrdersHistory();
-                return;
-            }
-            document.getElementById('mainSearchContainer').style.display = 'block';
-
-            const area = document.getElementById('productsDisplayContainer'); area.innerHTML = '';
-            let targetSections = currentSectionFilter === 'all' ? sectionsDatabase : [currentSectionFilter];
-            
-            if(productsDatabase.length === 0) {
-                area.innerHTML = '<p style="text-align:center; color:#9ca3af; padding:30px 0;">المتجر جاهز وفارغ، قم بإضافة منتجاتك من لوحة الإدارة بالأعلى الآن.</p>';
-                return;
-            }
-
-            targetSections.forEach(sec => {
-                const secProd = productsDatabase.filter(p => p.section === sec);
-                if(secProd.length === 0) return;
-
-                let gridHtml = `<h3 class="section-title">${sec}</h3><div class="products-grid">`;
-                secProd.forEach(p => {
-                    let badge = p.status === 'available' ? '<span class="badge-status badge-available">متوفر للطلب</span>' :
-                                p.status === 'unavailable' ? '<span class="badge-status badge-unavailable">نفذت الكمية</span>' :
-                                '<span class="badge-status badge-later">قريباً</span>';
-                    
-                    let oldPriceHtml = p.oldPrice > p.price ? `<span class="product-old-price">${p.oldPrice} ر.س</span>` : '';
-                    let btnDisabled = (p.status !== 'available' || p.stock <= 0) ? 'disabled' : '';
-
-                    gridHtml += `
-                        <div class="product-card" onclick="openProductDetail('${p.id}')">
-                            <img src="${p.image}" class="product-img">
-                            <div class="product-info">
-                                ${badge}
-                                <div class="product-title">${p.title}</div>
-                                <div class="product-desc">${p.desc}</div>
-                                <div class="stock-info">الكمية المتاحة: ${p.stock} قطعة</div>
-                                <div class="price-container">
-                                    <span class="product-price">${p.price} ر.س</span>
-                                    ${oldPriceHtml}
-                                </div>
-                                <button class="add-to-cart-btn" ${btnDisabled} onclick="event.stopPropagation(); addToCart('${p.id}')">
-                                    <i class="fas fa-shopping-cart"></i> إضافة للسلة
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-                gridHtml += `</div>`;
-                area.innerHTML += gridHtml;
-            });
-        }
-
-        function filterBySection(sec) { currentSectionFilter = sec; closeAll(); renderStoreFront(); }
-
-        function submitStoreComment() {
-            const name = document.getElementById('newCommName').value.trim();
-            const text = document.getElementById('newCommText').value.trim();
-            const rating = parseInt(document.getElementById('newCommRate').value) || 5;
-            if(!name || !text) return;
-            commentsDatabase.push({ name, text, rating });
-            saveData();
-            renderStoreFront();
-        }
-
-        function viewLinkModalContent(t, c) {
-            document.getElementById('productDetailModal').style.display = 'flex';
-            document.getElementById('modalDynamicBody').innerHTML = `
-                <h2 style="color:#00f0ff; margin-bottom:20px; text-align:center;">${unescape(t)}</h2>
-                <div style="font-size:15px; color:#e5e7eb; line-height:1.8; white-space:pre-wrap; background:rgba(255,255,255,0.02); padding:15px; border-radius:8px;">${unescape(c)}</div>
-            `;
-        }
-
-        // تفاصيل المنتج المنبثقة للعميل ودعم الـ HTML والأيقونات التفاعلية كاملة بداخلها
-        function openProductDetail(id) {
-            const p = productsDatabase.find(item => item.id === id);
-            if(!p) return;
-            document.getElementById('productDetailModal').style.display = 'flex';
-            
-            let badge = p.status === 'available' ? '<span class="badge-status badge-available">متوفر حالياً</span>' : '<span class="badge-status badge-unavailable">غير متوفر</span>';
-
-            let rowsHtml = '';
-            p.details.forEach(line => { rowsHtml += `<div class="dynamic-row">${line}</div>`; });
-
-            document.getElementById('modalDynamicBody').innerHTML = `
-                <div style="text-align:center;"><img src="${p.image}" class="modal-img"></div>
-                ${badge}
-                <h2 style="margin:10px 0; color:#fff;">${p.title}</h2>
-                <p style="color:#9ca3af; font-size:14px; margin-bottom:20px; line-height:1.5;">${p.desc}</p>
-                
-                <h4 style="border-bottom:1px solid #222; padding-bottom:8px; margin-bottom:10px;"><i class="fas fa-star" style="color:#00f0ff;"></i> مميزات وتفاصيل الخدمة المرفقة:</h4>
-                <div style="margin-bottom:25px;">${rowsHtml || '<p style="color:#666;">لا توجد تفاصيل مدرجة.</p>'}</div>
-                
-                <div style="display:flex; justify-content:space-between; align-items:center; background:#05070c; padding:15px; border-radius:8px;">
-                    <div><span style="font-size:13px; color:#9ca3af;">السعر الإجمالي:</span> <h3 style="color:#3b82f6;">${p.price} ر.س</h3></div>
-                    <button class="add-to-cart-btn" style="padding:12px 25px;" ${(p.status !== 'available' || p.stock <= 0)?'disabled':''} onclick="addToCart('${p.id}'); closeProductDetail();">إضافة الفورية للسلة</button>
-                </div>
-            `;
-        }
-        function closeProductDetail() { document.getElementById('productDetailModal').style.display = 'none'; }
-
-        // إضافة العميل المنتجات إلى السلة دون التأثير على المخزن مؤقتاً
-        function addToCart(id) {
-            const prod = productsDatabase.find(p => p.id === id);
-            if(!prod || prod.status !== 'available' || prod.stock <= 0) return;
-
-            const existing = shoppingCart.find(item => item.id === id);
-            if(existing) {
-                if(existing.qty >= prod.stock) { alert('عذراً، تجاوزت الحد المتاح بالمخزن لهذا المنتج حالياً!'); return; }
-                existing.qty++;
-            } else {
-                shoppingCart.push({ id: prod.id, title: prod.title, price: prod.price, image: prod.image, qty: 1 });
-            }
-            saveData();
-            alert('تمت إضافة المنتج بنجاح لملف سلتك الجانبية!');
-        }
-
-        function renderCart() {
-            const container = document.getElementById('cartItems'); container.innerHTML = '';
-            let total = 0;
-            shoppingCart.forEach((item, index) => {
-                total += item.price * item.qty;
-                container.innerHTML += `
-                    <div class="cart-item-row">
-                        <div class="cart-item-info" onclick="closeAll(); openProductDetail('${item.id}')">
-                            <img src="${item.image}" class="cart-item-img">
-                            <div>
-                                <div style="font-size:14px; font-weight:bold; color:#fff;">${item.title}</div>
-                                <div style="font-size:12px; color:#3b82f6;">${item.price} ر.س (x${item.qty})</div>
-                            </div>
-                        </div>
-                        <div class="cart-item-qty">
-                            <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
-                            <span style="font-size:14px;">${item.qty}</span>
-                            <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
-                        </div>
-                    </div>
-                `;
-            });
-            document.getElementById('cartTotalVal').innerText = total + ' ر.س';
-        }
-
-        function changeQty(idx, delta) {
-            const cartItem = shoppingCart[idx];
-            const prod = productsDatabase.find(p => p.id === cartItem.id);
-            if(delta > 0 && prod && cartItem.qty >= prod.stock) { alert('تجاوزت كمية المخزن المتاحة بالعرض!'); return; }
-            cartItem.qty += delta;
-            if(cartItem.qty <= 0) shoppingCart.splice(idx, 1);
-            saveData();
-            renderCart();
-        }
-
-        // العميل يقوم بإتمام الطلب ليدخل في حالة "جاري المعالجة" دون نقص كمية المخزن إلا عند القبول الفعلي
-        function checkoutOrder() {
-            if(shoppingCart.length === 0) { alert('سلتك الحالية فارغة!'); return; }
-            
-            let total = 0;
-            let finalItems = [];
-
-            shoppingCart.forEach(cartItem => {
-                total += cartItem.price * cartItem.qty;
-                finalItems.push({ id: cartItem.id, title: cartItem.title, qty: cartItem.qty, price: cartItem.price });
-            });
-
-            const newOrder = {
-                id: 'QR-' + Math.floor(10000 + Math.random() * 90000),
-                items: finalItems,
-                total: total,
-                status: 'قيد الانتظار' // حالة المعالجة البدئية قبل تفعيل وقبول الإداري للخصم
-            };
-
-            ordersDatabase.unshift(newOrder);
-            shoppingCart = [];
-            saveData();
-            closeAll();
-            renderStoreFront();
-
-            // نافذة نجاح الطلب الفخمة برقم الفاتورة وإرسالها للدعم للواتساب
-            document.getElementById('productDetailModal').style.display = 'flex';
-            document.getElementById('modalDynamicBody').innerHTML = `
-                <div class="success-box">
-                    <i class="fas fa-check-circle success-icon" style="color:#00f0ff;"></i>
-                    <h2>تم إرسال طلبيتك (جاري المعالجة)</h2>
-                    <p style="color:#9ca3af; margin-top:10px;">يرجى تزويد الدعم الفني برقم طلبك عبر الواتساب لتأكيد الدفع والتفعيل الفوري:</p>
-                    <div class="order-number-badge">${newOrder.id}</div>
-                    <div style="margin-top:15px;">
-                        <a href="https://wa.me/966545988301?text=مرحبا، قمت بطلب من المتجر وهذا رقم طلب المشتريات الخاص بي: ${newOrder.id}" target="_blank" class="whatsapp-btn" style="font-size:15px; padding:12px 22px;">
-                            <i class="fab fa-whatsapp"></i> إرسال رقم الفاتورة للواتساب فوراً
-                        </a>
-                    </div>
-                </div>
-            `;
-        }
-
-        // تاريخ ومشتريات العميل السابقة لمتابعتها
-        function renderClientOrdersHistory() {
-            const area = document.getElementById('productsDisplayContainer');
-            area.innerHTML = '<h3 class="section-title">تاريخ مشترياتك وطلباتك السابقة</h3>';
-            if(ordersDatabase.length === 0) {
-                area.innerHTML += '<p style="text-align:center; color:#666; margin-top:40px;">لم تقم بإنشاء أي طلبات شراء سابقة حتى الآن.</p>';
-                return;
-            }
-            ordersDatabase.forEach(o => {
-                let itemsStr = o.items.map(i => `${i.title} (عدد: ${i.qty})`).join(' - ');
-                area.innerHTML += `
-                    <div style="background:var(--bg-darker); border:1px solid rgba(255,255,255,0.05); padding:16px; border-radius:6px; margin-bottom:15px;">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                            <span style="font-weight:bold; color:#00f0ff;">رقم الفاتورة: ${o.id}</span>
-                            <span style="padding:4px 10px; border-radius:4px; font-size:12px; font-weight:bold; background:${o.status==='قيد الانتظار'?'#f59e0b':o.status==='تم القبول والخصم'?'#22c55e':'#ef4444'};">${o.status}</span>
-                        </div>
-                        <div style="font-size:13px; color:#e5e7eb; margin-bottom:8px;">محتوى الطلب: ${itemsStr}</div>
-                        <div style="font-size:14px; font-weight:bold; color:#22c55e;">المبلغ الإجمالي: ${o.total} ر.س</div>
-                    </div>
-                `;
-            });
-        }
-
-        // محرك البحث الفوري بالمتجر
-        function searchProducts() {
-            const query = document.getElementById('searchInput').value.trim().toLowerCase();
-            const area = document.getElementById('productsDisplayContainer');
-            if(!query) { renderStoreFront(); return; }
-            area.innerHTML = `<h3 class="section-title">نتائج البحث الفوري عن: "${query}"</h3><div class="products-grid">`;
-            const filtered = productsDatabase.filter(p => p.title.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query));
-            
-            if(filtered.length === 0) {
-                area.innerHTML = `<p style="text-align:center; color:#9ca3af; margin-top:30px; width:100%;">لم يتم العثور على أي منتج يطابق معايير البحث الحالية.</p>`;
-                return;
-            }
-
-            let html = '';
-            filtered.forEach(p => {
-                let badge = p.status === 'available' ? '<span class="badge-status badge-available">متوفر</span>' : '<span class="badge-status badge-unavailable">غير متوفر</span>';
-                let oldPriceHtml = p.oldPrice > p.price ? `<span class="product-old-price">${p.oldPrice} ر.س</span>` : '';
-                html += `
-                    <div class="product-card" onclick="openProductDetail('${p.id}')">
-                        <img src="${p.image}" class="product-img">
-                        <div class="product-info">
-                            ${badge}
-                            <div class="product-title">${p.title}</div>
-                            <div class="product-desc">${p.desc}</div>
-                            <div class="price-container"><span class="product-price">${p.price} ر.س</span>${oldPriceHtml}</div>
-                            <button class="add-to-cart-btn" ${(p.status !== 'available' || p.stock <= 0)?'disabled':''} onclick="event.stopPropagation(); addToCart('${p.id}')">إضافة للسلة</button>
-                        </div>
-                    </div>
-                `;
-            });
-            area.querySelector('.products-grid').innerHTML = html;
-        }
-    </script>
-</body>
-</html>
+                document.
