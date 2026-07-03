@@ -3,17 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر QR الذكي المتكامل</title>
-    
-    <!-- Tailwind CSS & FontAwesome Icons -->
+    <title>متجر QR المحدث</title>
+    <!-- تضمين Tailwind CSS و Font Awesome للأيقونات -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;900&display=swap');
-        body { font-family: 'Tajawal', sans-serif; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        body {
+            font-family: 'Tajawal', sans-serif;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col">
@@ -48,15 +52,15 @@
         <!-- ================= قسم المتجر ================= -->
         <section id="tab-store" class="tab-content active space-y-12">
             
-            <!-- بنر وبطاقات التوثيق (أيقونات متحركة جهة اليسار) -->
+            <!-- بنر وبطاقات التوثيق -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-white p-5 rounded-2xl border border-slate-100 flex items-center justify-between shadow-xs">
                     <div>
                         <h3 class="font-bold text-slate-900">متجر موثق رسميًا</h3>
                         <p class="text-sm text-slate-500 mt-1">مسجل ومعتمد وموثق لدى الجهات الرسمية.</p>
                     </div>
-                    <!-- الأيقونة يسار ومتحركة وصحيحة -->
-                    <div class="text-emerald-500 text-3xl ml-2">
+                    <!-- الأيقونة يسار وصحيحة ومتحركة -->
+                    <div class="text-emerald-500 text-2xl order-last">
                         <i class="fa-solid fa-circle-check fa-beat"></i>
                     </div>
                 </div>
@@ -66,8 +70,8 @@
                         <h3 class="font-bold text-slate-900">ضمان ذهبي ممتد</h3>
                         <p class="text-sm text-slate-500 mt-1">نضمن لك جودة المنتجات واسترجاع مرن.</p>
                     </div>
-                    <!-- الأيقونة يسار ومتحركة وصحيحة -->
-                    <div class="text-emerald-500 text-3xl ml-2">
+                    <!-- الأيقونة يسار وصحيحة ومتحركة -->
+                    <div class="text-emerald-500 text-2xl order-last">
                         <i class="fa-solid fa-circle-check fa-beat"></i>
                     </div>
                 </div>
@@ -90,35 +94,38 @@
                 <!-- المنتجات تولد هنا برمجياً -->
             </div>
 
-            <!-- روابط مهمة (أيقونات متحركة جهة اليسار) -->
+            <!-- روابط مهمة -->
             <div class="bg-white p-6 rounded-2xl border border-slate-100 space-y-4">
                 <h3 class="font-bold text-slate-900 flex items-center gap-2">روابط قد تهمك</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <a href="#" class="p-4 bg-slate-50 rounded-xl flex items-center justify-between hover:bg-slate-100 transition-colors">
                         <span class="text-sm font-medium text-slate-700">سياسة الشروط والأحكام</span>
-                        <div class="text-blue-500 text-lg ml-1"><i class="fa-solid fa-link fa-pulse"></i></div>
+                        <!-- الأيقونة يسار ومتحركة -->
+                        <div class="text-blue-500 text-lg order-last"><i class="fa-solid fa-link fa-pulse"></i></div>
                     </a>
                     <a href="#" class="p-4 bg-slate-50 rounded-xl flex items-center justify-between hover:bg-slate-100 transition-colors">
                         <span class="text-sm font-medium text-slate-700">الدعم الفني المباشر</span>
-                        <div class="text-blue-500 text-lg ml-1"><i class="fa-solid fa-link fa-pulse"></i></div>
+                        <!-- الأيقونة يسار ومتحركة -->
+                        <div class="text-blue-500 text-lg order-last"><i class="fa-solid fa-link fa-pulse"></i></div>
                     </a>
                 </div>
             </div>
 
-            <!-- قسم آراء العملاء (أيقونات متحركة جهة اليسار + إضافة تعليق ذكي) -->
+            <!-- قسم آراء العملاء ونموذج التعليق لمرة واحدة -->
             <div class="space-y-6">
                 <div class="flex items-center justify-between">
                     <h2 class="text-xl font-black text-slate-900 flex items-center gap-2">
                         <span class="w-2 h-6 bg-amber-500 rounded-full"></span> آراء وتقييمات العملاء
                     </h2>
-                    <div class="text-amber-500 text-2xl ml-2">
+                    <!-- الأيقونة يسار ومتحركة للآراء -->
+                    <div class="text-amber-500 text-xl order-last">
                         <i class="fa-solid fa-star fa-spin" style="animation-duration: 3s;"></i>
                     </div>
                 </div>
 
-                <!-- زر إضافة تعليق (يظهر في حال وجود سماحية) -->
+                <!-- صندوق إضافة تعليق ذكي (يظهر فقط إذا كان للعميل طلب مقبول ومفعل) -->
                 <div id="reviewPermissionBox" class="hidden bg-amber-50 border border-amber-200 p-4 rounded-xl space-y-3">
-                    <p class="text-sm text-amber-800 font-bold"><i class="fa-solid fa-circle-info"></i> تهانينا! تمت الموافقة على طلبك السابق، يمكنك الآن مشاركتنا تقييمك:</p>
+                    <p class="text-sm text-amber-800 font-bold"><i class="fa-solid fa-circle-info"></i> تم تأكيد طلبك بنجاح من الإدارة، يسعدنا مشاركة تقييمك (لمرة واحدة):</p>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <input type="text" id="reviewName" placeholder="اكتب اسمك هنا..." class="p-2 text-sm bg-white border border-slate-200 rounded-lg outline-none">
                         <select id="reviewRating" class="p-2 text-sm bg-white border border-slate-200 rounded-lg outline-none">
@@ -129,8 +136,8 @@
                             <option value="1">⭐ (1/5)</option>
                         </select>
                     </div>
-                    <textarea id="reviewText" placeholder="اكتب رأيك وتجربتك هنا بكل أمانة..." rows="2" class="w-full p-2 text-sm bg-white border border-slate-200 rounded-lg outline-none"></textarea>
-                    <button onclick="submitReview()" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold hover:bg-amber-700 transition-colors">إرسال التقييم المعتمد</button>
+                    <textarea id="reviewText" placeholder="اكتب رأيك الصادق في المتجر أو المنتج..." rows="2" class="w-full p-2 text-sm bg-white border border-slate-200 rounded-lg outline-none"></textarea>
+                    <button onclick="submitReview()" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-bold hover:bg-amber-700 transition-colors">إرسال التعليق</button>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="reviewsContainer">
@@ -154,11 +161,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">Bin ID للمنتجات</label>
-                        <input type="text" id="apiBinId" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="أدخل Bin ID الخاص بالمنتجات">
+                        <input type="text" id="apiBinId" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Bin ID للمنتجات">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">Bin ID للطلبات والتقييمات</label>
-                        <input type="text" id="apiOrdersBinId" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="أدخل Bin ID للطلبات">
+                        <input type="text" id="apiOrdersBinId" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm" placeholder="Bin ID للطلبات">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-slate-500 mb-1">X-Master-Key الخاص بك</label>
@@ -173,7 +180,7 @@
                 <!-- فورم إضافة وتعديل المنتج -->
                 <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-xs space-y-4 h-fit">
                     <h3 id="formTitle" class="font-bold text-slate-900 border-b border-slate-100 pb-2">إضافة منتج جديد</h3>
-                    <input type="hidden" id="editProductId"> <!-- حقل مخفي لحفظ ايدي المنتج الجاري تعديله -->
+                    <input type="hidden" id="editProductId">
                     
                     <div class="space-y-3">
                         <div>
@@ -187,7 +194,7 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-500 mb-1">القسم</label>
-                                <input type="text" id="prodCategory" class="w-full p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm" placeholder="مثال: رقمي">
+                                <input type="text" id="prodCategory" class="w-full p-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm" placeholder="رقمي">
                             </div>
                         </div>
                         <div>
@@ -205,7 +212,7 @@
                     </div>
                 </div>
 
-                <!-- جدول المنتجات الحالي مع خيار التعديل والحذف -->
+                <!-- جدول المنتجات الحالي مع التعديل والحذف -->
                 <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-100 shadow-xs space-y-4">
                     <h3 class="font-bold text-slate-900">المنتجات الحالية بالمتجر</h3>
                     <div class="overflow-x-auto">
@@ -219,7 +226,7 @@
                                 </tr>
                             </thead>
                             <tbody id="adminProductsTable">
-                                <!-- تظهر هنا مع أزرار تعديل وحذف -->
+                                <!-- المنتجات -->
                             </tbody>
                         </table>
                     </div>
@@ -228,7 +235,7 @@
 
             <!-- إدارة الطلبات والموافقات للتعليقات -->
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-xs space-y-4">
-                <h3 class="font-bold text-slate-900">إدارة الطلبات الواردة وتفعيل ميزة التقييم</h3>
+                <h3 class="font-bold text-slate-900">إدارة الطلبات وتفعيل ميزة التقييم للعملاء</h3>
                 <div class="overflow-x-auto">
                     <table class="w-full text-right text-sm">
                         <thead>
@@ -241,7 +248,7 @@
                             </tr>
                         </thead>
                         <tbody id="adminOrdersTable">
-                            <!-- طلبات وهمية/حقيقية لغرض الإدارة والموافقة -->
+                            <!-- الطلبات -->
                         </tbody>
                     </table>
                 </div>
@@ -250,9 +257,8 @@
 
     </main>
 
-    <!-- سكريبت تشغيل العمليات والربط السحابي والتحسينات المطلوبة -->
+    <!-- سكريبت تشغيل العمليات والربط السحابي -->
     <script>
-        // داتا افتراضية للمتجر لضمان عمله فورياً قبل تعبئة الـ API
         let storeData = {
             name: "متجر الـ QR الذكي",
             products: [],
@@ -266,10 +272,9 @@
             { id: "ORD-9921", customer: "فهد الحربي", item: "سيرفر ديسكورد متكامل", approved: false, item_id: null, allowed_review: false }
         ];
 
-        // أسماء الإناث الشائعة لتحديد الأفاتار تلقائياً بناءً عليها
-        const femaleKeywords = ["ساره", "سارة", "فاطمة", "فاطمه", "نورة", "نوره", "ريناد", "أمل", "امل", "مريم", "هند", "عبير", "ريم", "شهد", "غادة", "غاده"];
+        // مصفوفة الكلمات الدلالية للأسماء المؤنثة لتحديد الصورة تلقائياً
+        const femaleNames = ["ساره", "سارة", "فاطمة", "فاطمه", "نورة", "نوره", "ريناد", "أمل", "امل", "مريم", "هند", "عبير", "ريم", "شهد", "غادة", "غاده", "خلود", "هيفاء"];
 
-        // تبديل التبويبات
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -282,7 +287,6 @@
             event.currentTarget.classList.remove('text-slate-600');
         }
 
-        // حفظ بيانات الـ API في التخزين المحلي
         function saveApiSettings() {
             localStorage.setItem('jsonbin_key', document.getElementById('apiKey').value);
             localStorage.setItem('jsonbin_bin_prod', document.getElementById('apiBinId').value);
@@ -291,7 +295,6 @@
             fetchCloudData();
         }
 
-        // جلب البيانات من السحابة إن وجدت
         async function fetchCloudData() {
             const key = localStorage.getItem('jsonbin_key');
             const pBin = localStorage.getItem('jsonbin_bin_prod');
@@ -305,13 +308,12 @@
                         storeData.products = data.record.products || [];
                         if(data.record.reviews) storeData.reviews = data.record.reviews;
                     }
-                } catch(e) { console.log("خطأ في جلب بيانات المنتجات السحابية، سيتم استخدام الذاكرة المحلية الحالية."); }
+                } catch(e) { console.log("جاري استخدام البيانات المحلية الافتراضية."); }
             }
             renderStoreFront();
             renderAdminDashboard();
         }
 
-        // دفع وحفظ البيانات للسحابة
         async function updateCloudData() {
             const key = localStorage.getItem('jsonbin_key');
             const pBin = localStorage.getItem('jsonbin_bin_prod');
@@ -322,13 +324,12 @@
                         headers: { "Content-Type": "application/json", "X-Master-Key": key },
                         body: JSON.stringify(storeData)
                     });
-                } catch(e) { console.error("فشل التحديث السحابي:", e); }
+                } catch(e) { console.error(e); }
             }
             renderStoreFront();
             renderAdminDashboard();
         }
 
-        // بناء وعرض واجهة المتجر للمشترين
         function renderStoreFront() {
             document.getElementById('navStoreName').innerText = storeData.name;
             const container = document.getElementById('storefrontProducts');
@@ -358,16 +359,13 @@
                 `;
             });
 
-            // تحديث عرض الآراء والتعليقات
             renderReviews();
-            // تحديث فحص صندوق السماحية للتعليقات
             checkReviewPermission();
         }
 
-        // محاكاة طلب منتج لربطه بالتقييم بعد موافقة الإداري
         function simulateOrder(prodId, prodName) {
             let orderId = "ORD-" + Math.floor(1000 + Math.random() * 9000);
-            let customerName = prompt("لإتمام محاكاة الطلب السريع، فضلاً أدخل اسمك:");
+            let customerName = prompt("لإتمام الطلب السريع، أدخل اسمك هنا كاملاً:");
             if(!customerName) return;
 
             dbOrders.push({
@@ -378,11 +376,10 @@
                 approved: false,
                 allowed_review: false
             });
-            alert(`تم إرسال طلبك (${orderId}) بنجاح! بانتظار موافقة الإداري في لوحة التحكم لتفعيل حق التقييم لك.`);
+            alert(`تم إرسال طلبك بنجاح برقم: (${orderId}). يرجى من الإدارة الموافقة عليه في لوحة التحكم لتتمكن من كتابة تعليق وتقييم لمرة واحدة.`);
             renderAdminDashboard();
         }
 
-        // عرض التعليقات والآراء الحالية
         function renderReviews() {
             const container = document.getElementById('reviewsContainer');
             container.innerHTML = '';
@@ -403,10 +400,8 @@
             });
         }
 
-        // فحص ما إذا كان العميل يمتلك طلباً تمت الموافقة عليه ولم يقم بالتعليق بعد
         let activeOrderForReview = null;
         function checkReviewPermission() {
-            // البحث عن أول طلب تمت الموافقة عليه ومسموح له بالتعليق ولم يقم بالتعليق بعد
             activeOrderForReview = dbOrders.find(o => o.approved && o.allowed_review);
             const box = document.getElementById('reviewPermissionBox');
             if (activeOrderForReview) {
@@ -417,22 +412,20 @@
             }
         }
 
-        // إرسال التعليق الذكي من العميل المعتمد
         function submitReview() {
             const name = document.getElementById('reviewName').value.trim();
             const rating = parseInt(document.getElementById('reviewRating').value);
             const text = document.getElementById('reviewText').value.trim();
 
             if(!name || !text) {
-                alert("من فضلك أكمل كتابة الاسم ونص المراجعة.");
+                alert("الرجاء كتابة الاسم ونص المراجعة والتعليق أولاً.");
                 return;
             }
 
-            // توليد الصورة تلقائياً بناءً على نوع الاسم (ذكر أم أنثى)
-            let isFemale = femaleKeywords.some(keyword => name.includes(keyword));
+            // فحص الاسم وتحديد الصورة تلقائياً بناءً على قائمة أسماء الإناث
+            let isFemale = femaleNames.some(femaleName => name.includes(femaleName));
             let avatarUrl = isFemale ? "https://avatar.iran.liara.run/public/girl" : "https://avatar.iran.liara.run/public/boy";
 
-            // إضافة التقييم إلى المتجر والمنتج المشتري
             storeData.reviews.unshift({
                 id: Date.now(),
                 name: name,
@@ -441,20 +434,19 @@
                 avatar: avatarUrl
             });
 
-            // استهلاك ميزة التقييم لهذا الطلب المعتمد لمنعه من تكرار التعليق لأكثر من مرة لنفس الطلب
+            // استهلاك حق التعليق للطلب الحالي ليكون لمرة واحدة فقط
             if(activeOrderForReview) {
                 activeOrderForReview.allowed_review = false;
             }
 
-            alert("شكراً لك! تم نشر تقييمك المعتمد لمرة واحدة للمتجر والمنتج بنجاح.");
+            alert("شكراً لك! تم إرسال ونشر تعليقك المعتمد لمرة واحدة للمتجر وللمنتج بنجاح.");
             document.getElementById('reviewText').value = '';
             
             updateCloudData();
         }
 
-        // لوحة الإدارة: عرض وإدارة المنتجات والطلبات
         function renderAdminDashboard() {
-            // 1. عرض المنتجات بالجدول مع التعديل والحذف
+            // جدول المنتجات الحالي مع إضافة زر التعديل والحذف
             const prodTable = document.getElementById('adminProductsTable');
             prodTable.innerHTML = '';
             storeData.products.forEach(p => {
@@ -471,7 +463,7 @@
                 `;
             });
 
-            // 2. عرض طلبات العملاء لإعطاء صلاحية التعليق
+            // جدول طلبات العملاء لإعطاء صلاحية التعليق
             const orderTable = document.getElementById('adminOrdersTable');
             orderTable.innerHTML = '';
             dbOrders.forEach(o => {
@@ -495,7 +487,37 @@
             });
         }
 
-        // حفظ منتج (إضافة جديدة أو حفظ التعديل القائم)
+        // دالة تعبئة الفورم من أجل التعديل
+        function editProduct(id) {
+            let p = storeData.products.find(prod => prod.id === id);
+            if(!p) return;
+
+            document.getElementById('editProductId').value = p.id;
+            document.getElementById('prodName').value = p.name;
+            document.getElementById('prodPrice').value = p.price;
+            document.getElementById('prodCategory').value = p.category || '';
+            document.getElementById('prodImage').value = p.image || '';
+            document.getElementById('prodDesc').value = p.desc || '';
+
+            document.getElementById('formTitle').innerText = "تعديل المنتج الحالي";
+            document.getElementById('saveProdBtn').innerText = "تحديث وحفظ المنتج";
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+        }
+
+        // إلغاء عملية التعديل الحالية وتصفير الحقول
+        function resetProductForm() {
+            document.getElementById('editProductId').value = '';
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodPrice').value = '';
+            document.getElementById('prodCategory').value = '';
+            document.getElementById('prodImage').value = '';
+            document.getElementById('prodDesc').value = '';
+
+            document.getElementById('formTitle').innerText = "إضافة منتج جديد";
+            document.getElementById('saveProdBtn').innerText = "حفظ المنتج";
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+        }
+
         function saveProduct() {
             const id = document.getElementById('editProductId').value;
             const name = document.getElementById('prodName').value.trim();
@@ -510,59 +532,26 @@
             }
 
             if(id) {
-                // وضع التعديل: تحديث المنتج الحالي
+                // وضع التعديل الفعلي
                 let idx = storeData.products.findIndex(p => p.id === id);
                 if(idx !== -1) {
                     storeData.products[idx] = { id, name, price, category, image, desc };
-                    alert("تم تعديل بيانات المنتج بنجاح!");
+                    alert("تم تحديث وحفظ تعديلات المنتج السحابية!");
                 }
             } else {
-                // وضع الإضافة: منتج جديد تماماً
+                // وضع الإضافة لمنتج جديد
                 const newProd = {
                     id: "PROD-" + Date.now(),
                     name, price, category, image, desc
                 };
                 storeData.products.push(newProd);
-                alert("تم إضافة المنتج الجديد للمتجر بنجاح!");
+                alert("تم إضافة المنتج للمتجر بنجاح!");
             }
 
             resetProductForm();
             updateCloudData();
         }
 
-        // بدء عملية تعديل المنتج وملء الحقول بالبيانات الحالية
-        function editProduct(id) {
-            let p = storeData.products.find(prod => prod.id === id);
-            if(!p) return;
-
-            document.getElementById('editProductId').value = p.id;
-            document.getElementById('prodName').value = p.name;
-            document.getElementById('prodPrice').value = p.price;
-            document.getElementById('prodCategory').value = p.category || '';
-            document.getElementById('prodImage').value = p.image || '';
-            document.getElementById('prodDesc').value = p.desc || '';
-
-            // تغيير نصوص الواجهة لتتناسب مع وضع التعديل
-            document.getElementById('formTitle').innerText = "تعديل المنتج الحالي";
-            document.getElementById('saveProdBtn').innerText = "تحديث المنتج";
-            document.getElementById('cancelEditBtn').classList.remove('hidden');
-        }
-
-        // إلغاء التعديل وتصفير الفورم
-        function resetProductForm() {
-            document.getElementById('editProductId').value = '';
-            document.getElementById('prodName').value = '';
-            document.getElementById('prodPrice').value = '';
-            document.getElementById('prodCategory').value = '';
-            document.getElementById('prodImage').value = '';
-            document.getElementById('prodDesc').value = '';
-
-            document.getElementById('formTitle').innerText = "إضافة منتج جديد";
-            document.getElementById('saveProdBtn').innerText = "حفظ المنتج";
-            document.getElementById('cancelEditBtn').classList.add('hidden');
-        }
-
-        // حذف منتج من المتجر
         function deleteProduct(id) {
             if(confirm("هل أنت متأكد من رغبتك في حذف هذا المنتج نهائياً؟")) {
                 storeData.products = storeData.products.filter(p => p.id !== id);
@@ -570,19 +559,17 @@
             }
         }
 
-        // الإدارة: الموافقة على الطلب وتفعيل سماحية التقييم لمرة واحدة
         function approveOrder(orderId) {
             let order = dbOrders.find(o => o.id === orderId);
             if(order) {
                 order.approved = true;
-                order.allowed_review = true; // إعطاء صلاحية كتابة تعليق واحد فقط
-                alert(`تمت الموافقة على الطلب بنجاح! سيتمكن العميل ${order.customer} من كتابة تقييم معتمد للمتجر والمنتج لمرة واحدة.`);
+                order.allowed_review = true; // السماح له بتعليق واحد فقط
+                alert(`تم قبول الطلب. الآن يمتلك العميل ${order.customer} صلاحية كتابة تعليق وتقييم واحد للمتجر وللمنتج بنجاح.`);
                 renderAdminDashboard();
                 renderStoreFront();
             }
         }
 
-        // تحميل الإعدادات والتشغيل الأولي عند فتح الصفحة
         window.onload = function() {
             if(localStorage.getItem('apiKey')) document.getElementById('apiKey').value = localStorage.getItem('jsonbin_key');
             if(localStorage.getItem('apiBinId')) document.getElementById('apiBinId').value = localStorage.getItem('jsonbin_bin_prod');
