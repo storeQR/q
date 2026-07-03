@@ -511,7 +511,7 @@
             renderAdminSectionsTable();
             renderAdminLinksTable();
         }
-        function closeControlPanel() { document.getElementById('controlPanelModal').style.display = 'none'; }
+        function closeControlPanel() { document.getElementById('controlPanelModal').style.display = 'none'; saveData(); renderStoreFront(); }
 
         function switchAdminTab(tabId) {
             document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
@@ -520,7 +520,7 @@
             event.currentTarget.classList.add('active');
         }
 
-        // تحويل صورة ألبوم الجوال المباشرة لملف مدمج
+        // تحويل صورة ألبوم الجوال المباشرة لملف مدمج وقراءة البيانات كاملة
         function handleImageUpload(input) {
             const file = input.files[0];
             if (!file) return;
@@ -531,212 +531,387 @@
             reader.readAsDataURL(file);
         }
 
-        // إدارة الأقسام
-        async function addNewSection() {
-            const t = document.getElementById('newSecTitle').value.trim();
-            if(!t) return;
-            sectionsDatabase.push(t);
-            await saveData();
-            document.getElementById('newSecTitle').value = '';
-            updateSectionSelect(); renderAdminSectionsTable(); renderStoreFront();
-        }
-        async function deleteSection(index) { sectionsDatabase.splice(index, 1); await saveData(); renderAdminSectionsTable(); updateSectionSelect(); renderStoreFront(); }
-        function renderAdminSectionsTable() {
-            const tbody = document.getElementById('adminSectionsTableBody'); tbody.innerHTML = '';
-            sectionsDatabase.forEach((sec, idx) => { tbody.innerHTML += `<tr><td>${sec}</td><td><button class="admin-btn-danger" onclick="deleteSection(${idx})">حذف</button></td></tr>`; });
-        }
-        function updateSectionSelect() {
-            const select = document.getElementById('pSectionSelect'); select.innerHTML = '';
-            sectionsDatabase.forEach(s => { select.innerHTML += `<option value="${s}">${s}</option>`; });
-        }
-
-        // إدارة المنتجات ومحرك البحث الداخلي للتعديل والحذف
-        async function addNewProductItem() {
-            const title = document.getElementById('pTitle').value.trim();
-            const desc = document.getElementById('pDesc').value.trim();
-            const price = parseFloat(document.getElementById('pPrice').value) || 0;
-            const stock = parseInt(document.getElementById('pStock').value) || 0;
-            const section = document.getElementById('pSectionSelect').value;
-            const uploadedImg = document.getElementById('pLocalImgData').value;
-
-            if(!title) return;
-
-            productsDatabase.push({
-                id: 'PROD-' + Math.floor(1000 + Math.random() * 9000),
-                title, desc, price, stock, section, image: uploadedImg || 'https://via.placeholder.com/180'
+        // بناء الواجهة للمتجر
+        function renderStoreFront() {
+            const container = document.getElementById('productsDisplayContainer');
+            container.innerHTML = '';
+            
+            // تحديث القائمة الجانبية بالأقسام المتاحة
+            const menu = document.getElementById('sidebarMenu');
+            menu.innerHTML = `
+                <li><a href="#" onclick="filterBySection('all')"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li><a href="#" onclick="filterBySection('orders')"><i class="fas fa-history"></i> متابعة طلباتي</a></li>
+            `;
+            sectionsDatabase.forEach(sec => {
+                menu.innerHTML += `<li><a href="#" onclick="filterBySection('${sec}')"><i class="fas fa-folder"></i> ${sec}</a></li>`;
             });
 
-            await saveData();
-            alert('تم نشر وحفظ المنتج في السيرفر بنجاح!');
-            document.getElementById('pTitle').value = '';
-            document.getElementById('pDesc').value = '';
-            document.getElementById('pLocalImgData').value = '';
-            document.getElementById('pDeviceFile').value = '';
-            renderStoreFront(); renderAdminProductsTable();
-        }
+            // فلترة وعرض المنتجات بناء على الفئة المختارة
+            sectionsDatabase.forEach(sec => {
+                if (currentSectionFilter !== 'all' && currentSectionFilter !== sec) return;
 
-        function renderAdminProductsTable() {
-            const query = document.getElementById('searchProductsInput').value.toLowerCase().trim();
-            const tbody = document.getElementById('adminProductsTableBody'); tbody.innerHTML = '';
-            productsDatabase.forEach((p, index) => {
-                if(query && !p.title.toLowerCase().includes(query)) return;
-                tbody.innerHTML += `<tr><td>${p.title}</td><td>${p.price} ر.س</td><td>${p.stock}</td><td><button class="admin-btn-danger" onclick="deleteProductItem(${index})">حذف المنتج</button></td></tr>`;
+                const filteredProducts = productsDatabase.filter(p => p.section === sec);
+                if (filteredProducts.length === 0 && currentSectionFilter !== 'all') {
+                    container.innerHTML += `<h3 class="section-title">${sec}</h3><p style="color: var(--text-gray);">لا توجد منتجات في هذا القسم حالياً.</p>`;
+                    return;
+                }
+                if (filteredProducts.length === 0) return;
+
+                let gridHtml = `<h3 class="section-title">${sec}</h3><div class="products-grid">`;
+                filteredProducts.forEach(p => {
+                    gridHtml += `
+                        <div class="product-card" onclick="viewProductDetail('${p.id}')">
+                            <img class="product-img" src="${p.image || 'https://via.placeholder.com/150'}" alt="${p.title}">
+                            <div class="product-info">
+                                <div class="product-title">${p.title}</div>
+                                <div class="product-desc">${p.desc}</div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+                                    <span style="color:#00f0ff; font-weight:bold;">${p.price} ر.س</span>
+                                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${p.id}')">إضافة للسلة</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                gridHtml += `</div>`;
+                container.innerHTML += gridHtml;
             });
-        }
-        async function deleteProductItem(idx) { productsDatabase.splice(idx, 1); await saveData(); renderAdminProductsTable(); renderStoreFront(); }
 
-        // السلة والطلبات
+            // عرض الروابط المهمة
+            renderImportantLinks();
+            renderCarouselSlides();
+        }
+
+        function filterBySection(sectionName) {
+            currentSectionFilter = sectionName;
+            closeAll();
+            const lowerContainer = document.getElementById('lowerSectionsContainer');
+            const mainSearch = document.getElementById('mainSearchContainer');
+            
+            if (sectionName === 'orders') {
+                lowerContainer.style.display = 'none';
+                mainSearch.style.display = 'none';
+                renderCustomerOrdersPage();
+            } else {
+                lowerContainer.style.display = 'block';
+                mainSearch.style.display = 'block';
+                renderStoreFront();
+            }
+        }
+
+        // نظام محرك البحث الفوري للمنتجات
+        function searchProducts() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const container = document.getElementById('productsDisplayContainer');
+            container.innerHTML = '';
+
+            let hasResults = false;
+            let gridHtml = `<h3 class="section-title">نتائج البحث</h3><div class="products-grid">`;
+
+            productsDatabase.forEach(p => {
+                if (p.title.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query)) {
+                    hasResults = true;
+                    gridHtml += `
+                        <div class="product-card" onclick="viewProductDetail('${p.id}')">
+                            <img class="product-img" src="${p.image || 'https://via.placeholder.com/150'}" alt="${p.title}">
+                            <div class="product-info">
+                                <div class="product-title">${p.title}</div>
+                                <div class="product-desc">${p.desc}</div>
+                                <div style="display:flex; justify-content:space-between; align-items:center; margin-top:auto;">
+                                    <span style="color:#00f0ff; font-weight:bold;">${p.price} ر.س</span>
+                                    <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${p.id}')">إضافة للسلة</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+
+            gridHtml += `</div>`;
+            if (hasResults) {
+                container.innerHTML = gridHtml;
+            } else {
+                container.innerHTML = `<h3 class="section-title">نتائج البحث</h3><p style="color: var(--text-gray);">لم يتم العثور على أي منتج يطابق بحثك.</p>`;
+            }
+        }
+
+        // تفاصيل المنتج المنبثقة
+        function viewProductDetail(id) {
+            const p = productsDatabase.find(item => item.id === id);
+            if (!p) return;
+            const modalBody = document.getElementById('modalDynamicBody');
+            modalBody.innerHTML = `
+                <h2 style="color:#fff; margin-bottom:10px;">${p.title}</h2>
+                <span style="background:var(--primary-blue); padding:4px 10px; border-radius:3px; font-size:12px;">قسم ${p.section}</span>
+                <img class="modal-img" src="${p.image || 'https://via.placeholder.com/150'}">
+                <div style="margin:20px 0; font-size:15px; color:var(--text-gray); line-height:1.6;">${p.desc}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:15px; border-radius:8px;">
+                    <div>
+                        <div style="font-size:13px; color:var(--text-gray);">السعر الإجمالي</div>
+                        <div style="font-size:24px; color:#00f0ff; font-weight:bold;">${p.price} ر.س</div>
+                    </div>
+                    <button class="add-to-cart-btn" style="padding:12px 30px; font-size:16px;" onclick="addToCart('${p.id}'); closeProductDetail();">إضافة لسلة الشراء</button>
+                </div>
+            `;
+            document.getElementById('productDetailModal').style.display = 'flex';
+        }
+        function closeProductDetail() { document.getElementById('productDetailModal').style.display = 'none'; }
+
+        // إدارة السلة
         function addToCart(id) {
-            const prod = productsDatabase.find(p => p.id === id);
-            if(!prod || prod.stock <= 0) return;
-            const existing = shoppingCart.find(item => item.id === id);
-            if(existing) { existing.qty++; } else { shoppingCart.push({ id: prod.id, title: prod.title, price: prod.price, image: prod.image, qty: 1 }); }
-            alert('تمت إضافة المنتج للسلة!'); renderCart();
+            const p = productsDatabase.find(item => item.id === id);
+            if (!p) return;
+            const exist = shoppingCart.find(item => item.id === id);
+            if(exist) {
+                exist.qty++;
+            } else {
+                shoppingCart.push({id: p.id, title: p.title, price: p.price, qty: 1});
+            }
+            alert(`تم إضافة ${p.title} إلى السلة بنجاح!`);
+            renderCart();
+        }
+
+        function changeQty(id, amount) {
+            const item = shoppingCart.find(i => i.id === id);
+            if(!item) return;
+            item.qty += amount;
+            if(item.qty <= 0) {
+                shoppingCart = shoppingCart.filter(i => i.id !== id);
+            }
+            renderCart();
         }
 
         function renderCart() {
-            const container = document.getElementById('cartItems'); container.innerHTML = '';
+            const area = document.getElementById('cartItems');
+            area.innerHTML = '';
             let total = 0;
-            shoppingCart.forEach((item, index) => {
+            shoppingCart.forEach(item => {
                 total += item.price * item.qty;
-                container.innerHTML += `
+                area.innerHTML += `
                     <div class="cart-item-row">
-                        <div><strong>${item.title}</strong><br><small>${item.price} ر.س</small></div>
+                        <div>
+                            <div style="font-weight:bold; font-size:14px;">${item.title}</div>
+                            <div style="color:#00f0ff; font-size:13px; margin-top:3px;">${item.price} ر.س</div>
+                        </div>
                         <div class="cart-item-qty">
-                            <button class="qty-btn" onclick="changeQty(${index}, -1)">-</button>
+                            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
                             <span>${item.qty}</span>
-                            <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
+                            <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
                         </div>
                     </div>
                 `;
             });
-            document.getElementById('cartTotalVal').innerText = total + ' ر.س';
+            document.getElementById('cartTotalVal').innerText = `${total} ر.س`;
         }
-        function changeQty(idx, delta) { shoppingCart[idx].qty += delta; if(shoppingCart[idx].qty <= 0) shoppingCart.splice(idx, 1); renderCart(); }
 
-        // إتمام الطلب وتوليد الكود غير المتكرر والواتساب
-        async function checkoutOrder() {
-            if(shoppingCart.length === 0) { alert('السلة فارغة!'); return; }
+        // نظام إتمام الطلب وإصدار الفاتورة المباشرة
+        function checkoutOrder() {
+            if(shoppingCart.length === 0) { alert('سلتك فارغة حالياً!'); return; }
+            const total = shoppingCart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const orderId = 'QR-' + Math.floor(100000 + Math.random() * 900000);
             
-            const randNum = Math.floor(1000 + Math.random() * 9000);
-            const orderId = `#${randNum}-QR`;
-            
+            let itemsDetails = '';
+            shoppingCart.forEach(item => { itemsDetails += `${item.title} (الكمية: ${item.qty}) | `; });
+
             const newOrder = {
                 id: orderId,
-                items: [...shoppingCart],
-                total: shoppingCart.reduce((acc, it) => acc + (it.price * it.qty), 0),
-                status: 'قيد الانتظار'
+                details: itemsDetails,
+                total: total,
+                status: 'في انتظار الدفع والتسليم'
             };
 
-            ordersDatabase.unshift(newOrder);
-            shoppingCart = [];
-            await saveData(); closeAll(); renderStoreFront();
+            ordersDatabase.push(newOrder);
+            saveData();
 
-            const waMessage = encodeURIComponent(`مرحبا . رقم طلبي ${orderId}`);
+            // تجهيز نص رسالة الواتساب التلقائية
+            const whatsappMsg = encodeURIComponent(`مرحباً متجر QR، أود إتمام طلبي الدفع والتسليم:\nرقم الطلب الفاتورة: ${orderId}\nالمنتجات: ${itemsDetails}\nالإجمالي: ${total} ر.س`);
             
-            document.getElementById('productDetailModal').style.display = 'flex';
-            document.getElementById('modalDynamicBody').innerHTML = `
+            const mainDisplay = document.getElementById('productsDisplayContainer');
+            document.getElementById('mainSearchContainer').style.display = 'none';
+            document.getElementById('lowerSectionsContainer').style.display = 'none';
+            closeAll();
+
+            mainDisplay.innerHTML = `
                 <div class="success-box">
-                    <h2 style="color:#00f0ff;">شكرا لشرائك من كيو ار !</h2>
-                    <p style="margin-top:10px;">رقم طلبك هو : <strong class="order-number-badge">${orderId}</strong></p>
-                    <p class="note-red">ملاحظة تواصل على الضغط على تواصل الان للاستمرار. ل استكمال الطلب والدفع والتأكد من المنتجات .</p>
-                    <a href="https://wa.me/966545988301?text=${waMessage}" target="_blank" class="whatsapp-checkout-link">تواصل الآن للاستمرار</a>
+                    <lord-icon src="https://cdn.lordicon.com/lupuorrc.json" trigger="loop" colors="primary:#22c55e,secondary:#22c55e" style="width:100px;height:100px;"></lord-icon>
+                    <h2 style="color:#22c55e; margin-top:15px;">تم تسجيل طلبك بنجاح!</h2>
+                    <p style="margin-top:10px; color:var(--text-gray);">انسخ رقم الطلب أدناه أو اضغط على زر إتمام الدفع للمتابعة المباشرة عبر واتساب</p>
+                    <div class="order-number-badge">${orderId}</div>
+                    <div class="note-red">⚠️ تنبيه هام: يجب عليك الضغط على زر الدفع بالأسفل لإرسال الفاتورة للإدارة، وإلا لن يتم مراجعة طلبك أو تسليمه لك.</div>
+                    <a href="https://wa.me/966545988301?text=${whatsappMsg}" target="_blank" class="whatsapp-checkout-link"><i class="fab fa-whatsapp"></i> اضغط هنا لتأكيد الدفع عبر واتساب</a>
                 </div>
+            `;
+            shoppingCart = [];
+        }
+
+        // صفحة متابعة العميل لطلباته
+        function renderCustomerOrdersPage() {
+            const container = document.getElementById('productsDisplayContainer');
+            container.innerHTML = `
+                <h3 class="section-title">بوابة متابعة طلباتي الفورية</h3>
+                <div class="form-group" style="max-width:500px; margin-top:15px; display:flex; gap:10px;">
+                    <input type="text" id="custOrderSearchKey" placeholder="أدخل رقم الطلب الفاتورة (مثال: QR-123456)">
+                    <button class="admin-btn" onclick="searchCustomerOrder()">استعلام</button>
+                </div>
+                <div id="custOrderResultArea" style="margin-top:20px;"></div>
             `;
         }
 
-        function renderAdminOrders() {
-            const query = document.getElementById('searchOrdersInput').value.trim();
-            const tbody = document.getElementById('adminOrdersTableBody'); tbody.innerHTML = '';
-            ordersDatabase.forEach((o, i) => {
-                if(query && !o.id.includes(query)) return;
-                let pText = o.items.map(it => `${it.title} (x${it.qty})`).join('، ');
+        function searchCustomerOrder() {
+            const key = document.getElementById('custOrderSearchKey').value.trim();
+            const area = document.getElementById('custOrderResultArea');
+            if(!key) { area.innerHTML = '<p style="color:#ef4444;">الرجاء إدخال رقم الفاتورة أولاً.</p>'; return; }
+            
+            const match = ordersDatabase.find(o => o.id === key);
+            if(match) {
+                area.innerHTML = `
+                    <div style="background:var(--bg-darker); padding:20px; border-radius:8px; border:1px solid #3b82f6;">
+                        <h4 style="color:#00f0ff; margin-bottom:10px;">فاتورة رقم: ${match.id}</h4>
+                        <p style="margin-bottom:8px;"><b>المنتجات المشمولة:</b> ${match.details}</p>
+                        <p style="margin-bottom:8px;"><b>المبلغ الإجمالي:</b> ${match.total} ر.س</p>
+                        <p><b>حالة الطلب الحالية:</b> <span style="background:#1e40af; padding:3px 8px; border-radius:3px; font-size:13px; font-weight:bold;">${match.status}</span></p>
+                    </div>
+                `;
+            } else {
+                area.innerHTML = '<p style="color:#ef4444;">لم يتم العثور على أي طلب مسجل بهذا الرقم، يرجى التأكد وإعادة المحاولة.</p>';
+            }
+        }
+
+        // وظائف لوحة التحكم الإدارية
+        function updateSectionSelect() {
+            const select = document.getElementById('pSectionSelect');
+            select.innerHTML = '';
+            sectionsDatabase.forEach(sec => {
+                select.innerHTML += `<option value="${sec}">${sec}</option>`;
+            });
+        }
+
+        function addNewProductItem() {
+            const section = document.getElementById('pSectionSelect').value;
+            const title = document.getElementById('pTitle').value.trim();
+            const desc = document.getElementById('pDesc').value.trim();
+            const price = parseFloat(document.getElementById('pPrice').value) || 0;
+            const stock = parseInt(document.getElementById('pStock').value) || 0;
+            const image = document.getElementById('pLocalImgData').value;
+
+            if(!title || !desc) { alert('يرجى تعبئة جميع الحقول الأساسية للمنتج!'); return; }
+
+            const item = { id: 'PROD-' + Date.now(), section, title, desc, price, stock, image };
+            productsDatabase.push(item);
+            
+            // تنظيف الحقول بعد الحفظ
+            document.getElementById('pTitle').value = '';
+            document.getElementById('pDesc').value = '';
+            document.getElementById('pPrice').value = '0';
+            document.getElementById('pLocalImgData').value = '';
+            document.getElementById('pDeviceFile').value = '';
+            
+            alert('تم نشر المنتج بنجاح وعرضه في الواجهة!');
+            renderAdminProductsTable();
+        }
+
+        function renderAdminProductsTable() {
+            const q = document.getElementById('searchProductsInput').value.toLowerCase();
+            const tbody = document.getElementById('adminProductsTableBody');
+            tbody.innerHTML = '';
+            productsDatabase.forEach(p => {
+                if(p.title.toLowerCase().includes(q)) {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td><b>${p.title}</b><br><small style="color:var(--text-gray);">${p.section}</small></td>
+                            <td>${p.price} ر.س</td>
+                            <td>${p.stock} وحدة</td>
+                            <td><button class="admin-btn-danger" onclick="deleteProduct('${p.id}')">حذف</button></td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+        function deleteProduct(id) { productsDatabase = productsDatabase.filter(p => p.id !== id); renderAdminProductsTable(); }
+
+        function addNewSection() {
+            const title = document.getElementById('newSecTitle').value.trim();
+            if(!title) return;
+            if(sectionsDatabase.includes(title)) { alert('هذا القسم موجود بالفعل!'); return; }
+            sectionsDatabase.push(title);
+            document.getElementById('newSecTitle').value = '';
+            updateSectionSelect();
+            renderAdminSectionsTable();
+        }
+
+        function renderAdminSectionsTable() {
+            const tbody = document.getElementById('adminSectionsTableBody');
+            tbody.innerHTML = '';
+            sectionsDatabase.forEach((sec, idx) => {
                 tbody.innerHTML += `
                     <tr>
-                        <td>${o.id}</td>
-                        <td>${pText}</td>
-                        <td>${o.total} ر.س</td>
-                        <td><strong>${o.status}</strong></td>
-                        <td>
-                            <button class="admin-btn" style="background:#22c55e;font-size:11px;padding:4px 8px;margin-bottom:2px;" onclick="updateOrderStatus(${i}, 'تمت الطلبية')">قبول</button>
-                            <button class="admin-btn" style="background:#f59e0b;font-size:11px;padding:4px 8px;margin-bottom:2px;" onclick="updateOrderStatus(${i}, 'مرفوض')">رفض</button>
-                            <button class="admin-btn-danger" style="font-size:11px;padding:4px 8px;" onclick="deleteOrder(${i})">حذف</button>
-                        </td>
+                        <td>${sec}</td>
+                        <td><button class="admin-btn-danger" onclick="deleteSection(${idx})">حذف</button></td>
                     </tr>
                 `;
             });
         }
-        async function updateOrderStatus(idx, status) { ordersDatabase[idx].status = status; await saveData(); renderAdminOrders(); }
-        async function deleteOrder(idx) { ordersDatabase.splice(idx, 1); await saveData(); renderAdminOrders(); }
+        function deleteSection(idx) { sectionsDatabase.splice(idx, 1); updateSectionSelect(); renderAdminSectionsTable(); }
 
-        // إدارة الروابط المهمة
-        async function addNewImportantLink() {
+        function renderAdminOrders() {
+            const q = document.getElementById('searchOrdersInput').value.trim();
+            const tbody = document.getElementById('adminOrdersTableBody');
+            tbody.innerHTML = '';
+            ordersDatabase.forEach(o => {
+                if(!q || o.id.includes(q)) {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td>${o.id}</td>
+                            <td>${o.details}</td>
+                            <td>${o.total} ر.س</td>
+                            <td><span style="color:#00f0ff;">${o.status}</span></td>
+                            <td>
+                                <select onchange="updateOrderStatus('${o.id}', this.value)">
+                                    <option value="">تحديث الحالة...</option>
+                                    <option value="تم التسليم والإنهاء">تم التسليم والإنهاء</option>
+                                    <option value="ملغي أو مرفوض">ملغي أو مرفوض</option>
+                                </select>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+        }
+        function updateOrderStatus(id, newStatus) {
+            if(!newStatus) return;
+            const order = ordersDatabase.find(o => o.id === id);
+            if(order) { order.status = newStatus; alert('تم تحديث حالة الطلب بنجاح!'); renderAdminOrders(); }
+        }
+
+        // إدارة قسم الروابط المهمة
+        function addNewImportantLink() {
             const title = document.getElementById('linkTitleInput').value.trim();
             const desc = document.getElementById('linkDescInput').value.trim();
             if(!title || !desc) return;
-            if(importantLinksDatabase.length >= 6) { alert('الحد الأقصى للروابط المهمة هو 6 فقط!'); return; }
-            importantLinksDatabase.push({ title, desc });
-            await saveData();
+            importantLinksDatabase.push({title, desc});
             document.getElementById('linkTitleInput').value = '';
             document.getElementById('linkDescInput').value = '';
-            renderAdminLinksTable(); renderImportantLinksGrid();
+            alert('تم حفظ الرابط المهم بنجاح!');
+            renderAdminLinksTable();
         }
-        async function deleteImportantLink(idx) { importantLinksDatabase.splice(idx, 1); await saveData(); renderAdminLinksTable(); renderImportantLinksGrid(); }
+
         function renderAdminLinksTable() {
-            const tbody = document.getElementById('adminLinksTableBody'); tbody.innerHTML = '';
-            importantLinksDatabase.forEach((l, idx) => { tbody.innerHTML += `<tr><td>${l.title}</td><td><button class="admin-btn-danger" onclick="deleteImportantLink(${idx})">حذف</button></td></tr>`; });
-        }
-
-        // نظام السلايدر التلقائي والأسهم للتعليقات
-        function renderCarouselSlides() {
-            const container = document.getElementById('carouselSlidesArea'); container.innerHTML = '';
-            if(commentsDatabase.length === 0) {
-                container.innerHTML = `<div class="carousel-slide active"><div class="slide-text">لا توجد مراجعات حالياً</div></div>`;
-                return;
-            }
-            commentsDatabase.forEach((c, idx) => {
-                container.innerHTML += `
-                    <div class="carousel-slide ${idx === currentSlideIndex ? 'active' : ''}">
-                        <div class="slide-name">${c.name} ✅ <small style="color:#22c55e;">(مشتري مؤكد)</small></div>
-                        <div class="slide-text">"${c.text}"</div>
-                    </div>
-                `;
+            const tbody = document.getElementById('adminLinksTableBody');
+            tbody.innerHTML = '';
+            importantLinksDatabase.forEach((l, idx) => {
+                tbody.innerHTML += `<tr><td>${l.title}</td><td><button class="admin-btn-danger" onclick="deleteLink(${idx})">حذف</button></td></tr>`;
             });
         }
-        function showSlide(index) {
-            const slides = document.querySelectorAll('.carousel-slide');
-            if(slides.length === 0) return;
-            if(index >= slides.length) currentSlideIndex = 0;
-            else if(index < 0) currentSlideIndex = slides.length - 1;
-            else currentSlideIndex = index;
-            slides.forEach(s => s.classList.remove('active'));
-            slides[currentSlideIndex].classList.add('active');
-        }
-        function nextSlide() { showSlide(currentSlideIndex + 1); }
-        function prevSlide() { showSlide(currentSlideIndex - 1); }
-        function startCarouselAutoPlay() {
-            if(carouselInterval) clearInterval(carouselInterval);
-            carouselInterval = setInterval(() => { nextSlide(); }, 3000);
-        }
+        function deleteLink(idx) { importantLinksDatabase.splice(idx, 1); renderAdminLinksTable(); }
 
-        // الإشراف على التقييمات ومحرك بحث الإداري
-        function renderAdminComments() {
-            const query = document.getElementById('searchCommentsInput').value.toLowerCase().trim();
-            const tbody = document.getElementById('adminCommentsTableBody'); tbody.innerHTML = '';
-            commentsDatabase.forEach((c, i) => {
-                if(query && !c.name.toLowerCase().includes(query)) return;
-                tbody.innerHTML += `<tr><td>${c.name}</td><td>${c.text}</td><td><button class="admin-btn-danger" onclick="deleteCommentFromAdmin(${i})">حذف</button></td></tr>`;
-            });
-        }
-        async function deleteCommentFromAdmin(i) { commentsDatabase.splice(i,1); await saveData(); renderAdminComments(); renderCarouselSlides(); }
-
-        // عرض الروابط المهمة بالصفحة الكاملة
-        function renderImportantLinksGrid() {
-            const grid = document.getElementById('importantLinksGrid'); grid.innerHTML = '';
-            importantLinksDatabase.forEach(l => {
+        function renderImportantLinks() {
+            const grid = document.getElementById('importantLinksGrid');
+            grid.innerHTML = '';
+            importantLinksDatabase.forEach((l, idx) => {
                 grid.innerHTML += `<div class="link-grid-item" onclick="openFullPageView('${l.title}', \`${l.desc}\`)">${l.title}</div>`;
             });
         }
+
         function openFullPageView(title, desc) {
             document.getElementById('fullPageTitle').innerText = title;
             document.getElementById('fullPageContent').innerText = desc;
@@ -744,78 +919,50 @@
         }
         function closeFullPageView() { document.getElementById('fullPageViewContainer').style.display = 'none'; }
 
-        // بناء المتجر الرئيسي
-        function renderStoreFront() {
-            const menu = document.getElementById('sidebarMenu');
-            menu.innerHTML = `
-                <li><a href="#" onclick="filterBySection('all')"><i class="fas fa-home"></i> الرئيسية</a></li>
-                <li><a href="#" onclick="filterBySection('orders')"><i class="fas fa-history"></i> متابعة طلباتي</a></li>
-            `;
-            sectionsDatabase.forEach(s => { menu.innerHTML += `<li><a href="#" onclick="filterBySection('${s}')">📁 ${s}</a></li>`; });
-
-            renderCarouselSlides();
-            renderImportantLinksGrid();
-
-            const area = document.getElementById('productsDisplayContainer'); area.innerHTML = '';
-            let targetSections = currentSectionFilter === 'all' ? sectionsDatabase : [currentSectionFilter];
-            
-            targetSections.forEach(sec => {
-                const secProd = productsDatabase.filter(p => p.section === sec);
-                if(secProd.length === 0) return;
-
-                let gridHtml = `<h3 class="section-title">${sec}</h3><div class="products-grid">`;
-                secProd.forEach(p => {
-                    gridHtml += `
-                        <div class="product-card" onclick="openProductDetail('${p.id}')">
-                            <img src="${p.image}" class="product-img">
-                            <div class="product-info">
-                                <div class="product-title">${p.title}</div>
-                                <div class="product-desc">${p.desc}</div>
-                                <div style="margin-bottom:10px; font-size:13px; color:#3b82f6;">السعر: ${p.price} ر.س</div>
-                                <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${p.id}')">إضافة للسلة</button>
-                            </div>
-                        </div>
-                    `;
-                });
-                gridHtml += `</div>`; area.innerHTML += gridHtml;
+        // إدارة قسم التعليقات والآراء
+        function renderAdminComments() {
+            const q = document.getElementById('searchCommentsInput').value.toLowerCase();
+            const tbody = document.getElementById('adminCommentsTableBody');
+            tbody.innerHTML = '';
+            commentsDatabase.forEach((c, idx) => {
+                if(!q || c.name.toLowerCase().includes(q)) {
+                    tbody.innerHTML += `<tr><td>${c.name}</td><td>${c.text}</td><td><button class="admin-btn-danger" onclick="deleteComment(${idx})">حذف</button></td></tr>`;
+                }
             });
         }
+        function deleteComment(idx) { commentsDatabase.splice(idx, 1); renderAdminComments(); }
 
-        function filterBySection(sec) { currentSectionFilter = sec; closeAll(); renderStoreFront(); }
-        function openProductDetail(id) {
-            const p = productsDatabase.find(item => item.id === id); if(!p) return;
-            document.getElementById('productDetailModal').style.display = 'flex';
-            document.getElementById('modalDynamicBody').innerHTML = `
-                <img src="${p.image}" class="modal-img">
-                <h2 style="margin-top:15px;">${p.title}</h2>
-                <p style="color:var(--text-gray);margin-top:10px;">${p.desc}</p>
-                <h3 style="margin-top:15px;color:#3b82f6;">السعر: ${p.price} ر.س</h3>
-                <button class="add-to-cart-btn" style="width:100%; padding:12px; margin-top:15px;" onclick="addToCart('${p.id}'); closeProductDetail();">إضافة للسلة</button>
-            `;
-        }
-        function closeProductDetail() { document.getElementById('productDetailModal').style.display = 'none'; }
-
-        function searchProducts() {
-            const query = document.getElementById('searchInput').value.toLowerCase().trim();
-            if(!query) { renderStoreFront(); return; }
-            const area = document.getElementById('productsDisplayContainer'); area.innerHTML = '<h3 class="section-title">نتائج البحث</h3>';
-            const filtered = productsDatabase.filter(p => p.title.toLowerCase().includes(query) || p.desc.toLowerCase().includes(query));
-            if(filtered.length === 0) { area.innerHTML += '<p style="text-align:center; color:#9ca3af; margin-top:20px;">لا توجد منتجات مطابقة.</p>'; return; }
-            let gridHtml = '<div class="products-grid">';
-            filtered.forEach(p => {
-                gridHtml += `
-                    <div class="product-card" onclick="openProductDetail('${p.id}')">
-                        <img src="${p.image}" class="product-img">
-                        <div class="product-info">
-                            <div class="product-title">${p.title}</div>
-                            <div class="product-desc">${p.desc}</div>
-                            <div style="margin-bottom:10px; font-size:13px; color:#3b82f6;">السعر: ${p.price} ر.س</div>
-                            <button class="add-to-cart-btn" onclick="event.stopPropagation(); addToCart('${p.id}')">إضافة للسلة</button>
-                        </div>
+        function renderCarouselSlides() {
+            const area = document.getElementById('carouselSlidesArea');
+            area.innerHTML = '';
+            if(commentsDatabase.length === 0) {
+                area.innerHTML = '<div class="carousel-slide active"><div class="slide-text">لا توجد آراء عملاء حالياً.</div></div>';
+                return;
+            }
+            commentsDatabase.forEach((c, idx) => {
+                area.innerHTML += `
+                    <div class="carousel-slide ${idx === currentSlideIndex ? 'active' : ''}">
+                        <div class="slide-name">${c.name}</div>
+                        <div class="slide-text">${c.text}</div>
                     </div>
                 `;
             });
-            gridHtml += '</div>'; area.innerHTML += gridHtml;
+        }
+
+        // نظام تحريك السلايدر تلقائياً
+        function startCarouselAutoPlay() {
+            if(carouselInterval) clearInterval(carouselInterval);
+            carouselInterval = setInterval(() => { nextSlide(); }, 5000);
+        }
+        function nextSlide() {
+            if(commentsDatabase.length === 0) return;
+            currentSlideIndex = (currentSlideIndex + 1) % commentsDatabase.length;
+            renderCarouselSlides();
+        }
+        function prevSlide() {
+            if(commentsDatabase.length === 0) return;
+            currentSlideIndex = (currentSlideIndex - 1 + commentsDatabase.length) % commentsDatabase.length;
+            renderCarouselSlides();
         }
     </script>
 </body>
