@@ -3,780 +3,1390 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر QR الأسطوري 2026</title>
-    <!-- كود ربط قاعدة البيانات السحابية Supabase -->
+    <title>متجر QR الأسطوري المطور | 2026</title>
+    
+    <!-- مكتبة الأيقونات الاحترافية Font Awesome لتجنب الإيموجيات الكلاسيكية -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- مكتبة اتصال قاعدة البيانات السحابية Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
     <style>
+        /* ==========================================
+           🎨 THEME & CYBERPUNK GAMING STYLES (التصميم الاحترافي الحديث)
+           ========================================== */
         :root {
-            --neon-blue: #00d2ff;
-            --royal-blue: #0066ff;
-            --gold: #ffd700;
-            --dark-bg: #0a0f1d;
-            --card-bg: #131a30;
-            --text-light: #f1f5f9;
+            --neon-blue: #00f0ff;
+            --glowing-cyan: #00d2ff;
+            --royal-blue: #0055ff;
+            --deep-dark: #060913;
+            --card-bg: #0d1326;
+            --admin-dark: #0a0e1a;
+            --gold-glow: #ffd700;
+            --text-main: #f1f5f9;
+            --text-muted: #64748b;
+            --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background-color: var(--dark-bg); color: var(--text-light); overflow-x: hidden; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            user-select: none;
+        }
 
-        /* --- شاشة إنترو البرق والـ QR --- */
+        body {
+            background-color: var(--deep-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* --- ⚡ إنترو البرق والـ QR الخارق --- */
         #intro-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #000; z-index: 9999; display: flex; align-items: center; justify-content: center;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #02040a;
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
-        .lightning-flash {
-            position: absolute; width: 100%; height: 100%;
-            background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(0,210,255,0.8) 50%, rgba(0,0,0,0) 100%);
-            opacity: 0; pointer-events: none;
+
+        .lightning-bolt {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,1) 0%, rgba(0,240,255,0.9) 30%, rgba(0,85,255,0.3) 60%, rgba(0,0,0,0) 100%);
+            mix-blend-mode: overlay;
+            opacity: 0;
+            pointer-events: none;
         }
-        .intro-text { font-size: 80px; font-weight: bold; color: var(--neon-blue); text-shadow: 0 0 20px var(--neon-blue); transition: opacity 1s ease; }
 
-        /* --- الهيدر والقائمة الجانبية --- */
-        header { background: var(--card-bg); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--royal-blue); position: sticky; top: 0; z-index: 100; }
-        .header-right { display: flex; align-items: center; gap: 15px; }
-        .menu-btn { font-size: 28px; cursor: pointer; color: var(--neon-blue); }
-        .logo { font-size: 26px; font-weight: bold; color: var(--neon-blue); text-shadow: 0 0 8px var(--royal-blue); }
-        .cart-icon { font-size: 26px; color: var(--neon-blue); cursor: pointer; position: relative; }
-        .cart-count { position: absolute; top: -8px; left: -10px; background: red; color: white; font-size: 12px; padding: 2px 6px; border-radius: 50%; }
+        .intro-logo-text {
+            font-size: 110px;
+            font-weight: 900;
+            color: var(--neon-blue);
+            letter-spacing: 5px;
+            text-shadow: 0 0 30px var(--royal-blue), 0 0 60px var(--neon-blue);
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-        /* القائمة الجانبية درج */
-        .sidebar { position: fixed; top: 0; right: -300px; width: 300px; height: 100%; background: var(--card-bg); z-index: 1000; transition: 0.4s; padding: 20px; box-shadow: -5px 0 15px rgba(0,0,0,0.5); display: flex; flex-direction: column; justify-content: space-between; }
-        .sidebar.open { right: 0; }
-        .sidebar-menu { list-style: none; margin-top: 30px; }
-        .sidebar-menu li { padding: 12px; border-bottom: 1px solid #232d4b; cursor: pointer; font-weight: bold; }
-        .sidebar-menu li:hover { color: var(--neon-blue); }
-        .close-sidebar { font-size: 24px; cursor: pointer; color: red; text-align: left; }
+        /* --- 📱 الهيدر والأيقونات الاحترافية --- */
+        header {
+            background: rgba(13, 19, 38, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 18px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(0, 85, 255, 0.4);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            box-shadow: 0 4px 20px rgba(0, 240, 255, 0.1);
+        }
 
-        /* --- التأثيرات والنبضات --- */
-        .badges-container { display: flex; flex-direction: column; gap: 15px; padding: 20px; max-width: 800px; margin: 0 auto; }
-        .badge-box { background: var(--card-bg); border-radius: 12px; padding: 15px; display: flex; align-items: center; gap: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        
-        .pulse-gold { width: 24px; height: 24px; background: var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; animation: pulseG 1.5s infinite; }
-        .pulse-blue { width: 24px; height: 24px; background: var(--neon-blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; animation: pulseB 1.5s infinite; }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
 
-        @keyframes pulseG { 0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(255, 215, 0, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); } }
-        @keyframes pulseB { 0% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0.7); } 70% { box-shadow: 0 0 0 12px rgba(0, 210, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(0, 210, 255, 0); } }
+        .menu-trigger-btn {
+            font-size: 24px;
+            color: var(--neon-blue);
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
 
-        /* --- المنتجات --- */
-        .main-container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-        .products-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 20px; }
-        .product-card { background: var(--card-bg); border-radius: 12px; padding: 15px; border: 1px solid #1e294b; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; }
-        .product-img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; background: #232d4b; }
-        .price-tag { color: var(--neon-blue); font-weight: bold; font-size: 18px; margin: 8px 0; }
-        .old-price { text-decoration: line-through; color: #64748b; font-size: 14px; margin-right: 8px; }
-        .btn-buy { width: 100%; background: var(--royal-blue); color: white; border: none; padding: 8px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+        .menu-trigger-btn:hover {
+            transform: scale(1.1);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
 
-        /* --- صفحة المنتج الكاملة التفاصيل --- */
-        #product-details-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark-bg); z-index: 500; display: none; overflow-y: auto; padding: 20px; }
-        .back-btn { font-size: 24px; color: var(--neon-blue); cursor: pointer; margin-bottom: 20px; display: inline-block; }
+        .main-logo-area {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--text-main);
+            text-shadow: 0 0 12px var(--neon-blue);
+            cursor: pointer;
+        }
 
-        /* --- التعليقات الدوارة --- */
-        .reviews-section { background: var(--card-bg); padding: 25px; border-radius: 15px; margin: 30px auto; max-width: 600px; text-align: center; border: 1px solid #1e294b; }
-        .reviews-title-box { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; }
-        .mystery-avatar { width: 35px; height: 35px; background: radial-gradient(circle, var(--royal-blue) 0%, rgba(0,0,0,1) 100%); border-radius: 50%; box-shadow: 0 0 8px var(--neon-blue); }
-        .slider-controls { display: flex; justify-content: space-between; align-items: center; margin-top: 15px; }
-        .arrow-btn { background: var(--royal-blue); color: white; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+        .shopping-cart-wrapper {
+            font-size: 24px;
+            color: var(--neon-blue);
+            cursor: pointer;
+            position: relative;
+            transition: var(--transition-smooth);
+        }
 
-        /* --- الروابط المهمة --- */
-        .important-links-section { max-width: 800px; margin: 30px auto; padding: 0 20px; }
-        .links-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px; }
-        .link-card { background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid #1e294b; text-align: center; cursor: pointer; font-weight: bold; }
-        #full-link-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark-bg); z-index: 600; display: none; padding: 40px; }
+        .shopping-cart-wrapper:hover {
+            color: var(--text-main);
+            transform: translateY(-2px);
+        }
 
-        /* --- السلة والطلب --- */
-        #cart-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--dark-bg); z-index: 400; display: none; padding: 20px; }
-        .order-success-box { background: var(--card-bg); padding: 30px; border-radius: 15px; text-align: center; border: 2px solid var(--neon-blue); max-width: 500px; margin: 50px auto; }
+        .cart-badge-counter {
+            position: absolute;
+            top: -10px;
+            left: -12px;
+            background: #ff0055;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 7px;
+            border-radius: 20px;
+            box-shadow: 0 0 8px #ff0055;
+        }
 
-        /* --- لوحة التحكم --- */
-        #admin-page { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 700; display: none; padding: 20px; overflow-y: auto; color: white; }
-        .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
-        .admin-card { background: #1e293b; padding: 15px; border-radius: 8px; }
-        input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; background: #334155; border: 1px solid #475569; color: white; border-radius: 6px; }
-        .admin-btn { background: var(--neon-blue); color: black; font-weight: bold; border: none; padding: 10px; width: 100%; border-radius: 6px; cursor: pointer; margin-top: 5px; }
+        /* --- 📂 القائمة الجانبية (الدرج) --- */
+        .navigation-sidebar {
+            position: fixed;
+            top: 0;
+            right: -320px;
+            width: 320px;
+            height: 100%;
+            background: var(--admin-dark);
+            border-left: 2px solid var(--royal-blue);
+            z-index: 9999;
+            transition: var(--transition-smooth);
+            padding: 25px;
+            box-shadow: -10px 0 30px rgba(0,0,0,0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
 
-        /* --- الحقوق والدعم --- */
-        footer { background: #070a14; text-align: center; padding: 25px; margin-top: 40px; border-top: 1px solid #1e294b; }
-        .support-btn { display: inline-flex; align-items: center; gap: 8px; background: #25d366; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-size: 14px; margin-bottom: 10px; font-weight: bold; }
+        .navigation-sidebar.sidebar-active {
+            right: 0;
+        }
+
+        .sidebar-header-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
+        }
+
+        .sidebar-close-btn {
+            font-size: 22px;
+            color: #ff3b3b;
+            cursor: pointer;
+        }
+
+        .menu-items-list {
+            list-style: none;
+            margin-top: 30px;
+        }
+
+        .menu-items-list li {
+            padding: 15px 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition-smooth);
+            background: rgba(255,255,255,0.02);
+        }
+
+        .menu-items-list li:hover, .menu-items-list li.active-tab {
+            background: linear-gradient(90deg, var(--royal-blue), transparent);
+            color: var(--neon-blue);
+            padding-right: 20px;
+        }
+
+        /* --- 🥇 النبضات الاحترافية (الضمان والموثوقية) --- */
+        .trust-badges-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            padding: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .trust-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+
+        .pulse-icon-gold {
+            width: 45px;
+            height: 45px;
+            background: var(--gold-glow);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-size: 18px;
+            animation: goldPulseAnimation 2s infinite;
+        }
+
+        .pulse-icon-blue {
+            width: 45px;
+            height: 45px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: black;
+            font-size: 18px;
+            animation: bluePulseAnimation 2s infinite;
+        }
+
+        @keyframes goldPulseAnimation {
+            0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.7); transform: scale(1); }
+            70% { box-shadow: 0 0 0 15px rgba(255, 215, 0, 0); transform: scale(1.05); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); transform: scale(1); }
+        }
+
+        @keyframes bluePulseAnimation {
+            0% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.7); transform: scale(1); }
+            70% { box-shadow: 0 0 0 15px rgba(0, 240, 255, 0); transform: scale(1.05); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 240, 255, 0); transform: scale(1); }
+        }
+
+        /* --- 📁 فلترة الأقسام الجانبية والعلوية --- */
+        .categories-chips-container {
+            max-width: 1200px;
+            margin: 15px auto;
+            padding: 0 25px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+        }
+        .chip {
+            background: #141b30; padding: 8px 18px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); white-space: nowrap; transition: var(--transition-smooth);
+        }
+        .chip.active-chip, .chip:hover {
+            background: var(--royal-blue); color: var(--neon-blue); border-color: var(--neon-blue);
+        }
+
+        /* --- 🛍️ شبكة المنتجات (2 تحت 2 بدقة متناهية) --- */
+        .store-main-layout {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 25px;
+        }
+
+        .products-dynamic-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .modern-product-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid rgba(0, 85, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            transition: var(--transition-smooth);
+        }
+
+        .modern-product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-blue);
+            box-shadow: 0 8px 25px rgba(0, 240, 255, 0.15);
+        }
+
+        .product-media-wrapper {
+            width: 100%;
+            height: 160px;
+            border-radius: 12px;
+            background: #141b30;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .product-media-wrapper img {
+            width: 100%; height: 100%; object-fit: cover;
+        }
+
+        .product-glowing-price {
+            color: var(--neon-blue);
+            font-weight: 800;
+            font-size: 20px;
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .product-slashed-price {
+            text-decoration: line-through;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .action-shopping-btn {
+            width: 100%;
+            background: linear-gradient(135deg, var(--royal-blue), #0033aa);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: var(--transition-smooth);
+        }
+
+        .action-shopping-btn:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 0 15px var(--royal-blue);
+        }
+
+        /* --- ⭐ ستايل المراجعات والتعليقات الدوارة غامضة --- */
+        .testimonials-slider-section {
+            background: linear-gradient(180deg, var(--card-bg), #090d19);
+            padding: 35px;
+            border-radius: 20px;
+            margin: 40px auto;
+            max-width: 700px;
+            text-align: center;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            position: relative;
+        }
+
+        .slider-avatar-mystery {
+            width: 55px;
+            height: 55px;
+            background: radial-gradient(circle, rgba(0,240,255,0.4) 0%, rgba(6,9,19,1) 100%);
+            border-radius: 50%;
+            margin: 0 auto 15px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--neon-blue);
+            font-size: 22px;
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        .slider-controls-wrap {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+        }
+
+        .slider-arrow {
+            background: rgba(0, 85, 255, 0.2);
+            color: var(--neon-blue);
+            border: 1px solid var(--royal-blue);
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: var(--transition-smooth);
+        }
+
+        .slider-arrow:hover {
+            background: var(--royal-blue);
+            color: white;
+        }
+
+        /* --- 🔗 الروابط المهمة (3 يمين و3 يسار بالتوازي) --- */
+        .links-block-section {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 25px;
+        }
+
+        .grid-dual-columns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .interactive-link-card {
+            background: #0f162e;
+            padding: 20px;
+            border-radius: 12px;
+            border-right: 4px solid var(--neon-blue);
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition-smooth);
+        }
+
+        .interactive-link-card:hover {
+            background: var(--card-bg);
+            transform: scale(1.02);
+        }
+
+        /* --- 📄 الصفحات الكاملة المنبثقة التفاعلية --- */
+        .fullscreen-overlay-page {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--deep-dark);
+            z-index: 99999;
+            display: none;
+            overflow-y: auto;
+            padding: 40px;
+        }
+
+        .overlay-nav-back {
+            font-size: 18px;
+            color: var(--neon-blue);
+            cursor: pointer;
+            margin-bottom: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* --- ⚙️ لوحة الإدارة الخارقة والمقفل بالأمان --- */
+        #admin-control-center-view {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--admin-dark);
+            z-index: 999999;
+            display: none;
+            overflow-y: auto;
+            padding: 30px;
+        }
+
+        .panel-grid-dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 30px;
+            margin-top: 25px;
+        }
+
+        .panel-box-card {
+            background: #121829;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 10px 0;
+            background: #192239;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0,240,255,0.3);
+        }
+
+        .core-dashboard-btn {
+            background: linear-gradient(135deg, var(--neon-blue), var(--royal-blue));
+            color: black;
+            font-weight: bold;
+            border: none;
+            padding: 14px;
+            width: 100%;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            transition: var(--transition-smooth);
+        }
+
+        .core-dashboard-btn:hover {
+            filter: brightness(1.2);
+            box-shadow: 0 0 15px var(--neon-blue);
+        }
+
+        /* --- 🧾 تذييل وحقوق المتجر --- */
+        footer {
+            background: #03050a;
+            text-align: center;
+            padding: 35px;
+            margin-top: 60px;
+            border-top: 2px solid #0d1326;
+        }
+
+        .whatsapp-channel-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #25d366;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 15px;
+            box-shadow: 0 5px 15px rgba(37, 211, 102, 0.3);
+            margin-bottom: 20px;
+            transition: var(--transition-smooth);
+        }
+
+        .whatsapp-channel-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.5);
+        }
     </style>
 </head>
 <body>
 
-    <!-- ⚡ شاشة إنترو البرق والـ QR ⚡ -->
+    <!-- ⚡ شاشة إنترو البرق والـ QR الخارق واللامع عند الفتح ⚡ -->
     <div id="intro-overlay">
-        <div class="lightning-flash" id="flash-effect"></div>
-        <div class="intro-text" id="intro-logo">QR</div>
+        <div class="lightning-bolt" id="lightning-fx"></div>
+        <div class="intro-logo-text" id="intro-text-brand">QR</div>
     </div>
 
-    <!-- 📱 الهيدر الرئيسي للمتجر -->
-    <header id="main-header" style="display:none;">
-        <div class="header-right">
-            <span class="menu-btn" onclick="toggleSidebar()">☰</span>
-            <div class="logo">QR</div>
+    <!-- 📱 الهيدر الرئيسي للمتجر بأيقونات احترافية -->
+    <header id="store-main-header" style="display:none;">
+        <div class="header-brand">
+            <i class="fa-solid fa-bars menu-trigger-btn" onclick="toggleSidebarMenu(true)"></i>
+            <div class="main-logo-area" onclick="backToHomeView()">QR</div>
         </div>
-        <div class="cart-icon" onclick="openCartPage()">🛒<span class="cart-count" id="cart-counter">0</span></div>
+        <div class="shopping-cart-wrapper" onclick="openCartView()">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span class="cart-badge-counter" id="global-cart-counter">0</span>
+        </div>
     </header>
 
-    <!-- 🗂️ القائمة الجانبية (الشخطات الثلاث) -->
-    <div class="sidebar" id="sidebar-menu">
+    <!-- 🗂️ القائمة الجانبية المتقدمة (الشخطات الثلاث) -->
+    <div class="navigation-sidebar" id="app-sidebar">
         <div>
-            <div class="close-sidebar" onclick="toggleSidebar()">✕</div>
-            <ul class="sidebar-menu">
-                <li onclick="switchSection('main')">🏡 القسم الرئيسي</li>
-                <li onclick="switchSection('prev-orders')">📦 المشتريات السابقة</li>
+            <div class="sidebar-header-area">
+                <h3 style="color:var(--neon-blue);"><i class="fa-solid fa-compass"></i> تصفح القائمة</h3>
+                <i class="fa-solid fa-xmark sidebar-close-btn" onclick="toggleSidebarMenu(false)"></i>
+            </div>
+            <ul class="menu-items-list">
+                <li id="tab-home" class="active-tab" onclick="switchMainTab('main')"><i class="fa-solid fa-house"></i> القسم الرئيسي</li>
+                <li id="tab-orders" onclick="switchMainTab('prev-orders')"><i class="fa-solid fa-clock-rotate-left"></i> المشتريات السابقة</li>
             </ul>
         </div>
-        <div class="sidebar-menu">
-            <li onclick="promptAdminLogin()" style="border-bottom:none; color:#64748b; font-size:13px; text-align:center;">🔒 تسجيل كإداري</li>
-        </div>
+        <ul class="menu-items-list">
+            <li onclick="handleAdminSystemGate()" style="background:transparent; border:none; color:var(--text-muted); justify-content:center; font-size:13px;">
+                <i class="fa-solid fa-lock-open"></i> تسجيل كإداري
+            </li>
+        </ul>
     </div>
 
-    <!-- 🌐 الواجهة الأساسية للموقع -->
-    <div id="store-front-view" style="display:none;">
-        <!-- 🥇 بنرات التأثيرات والنبضات الذكية -->
-        <div class="badges-container">
-            <div class="badge-box">
-                <div class="pulse-gold">✓</div>
+    <!-- 🌐 الواجهة الأساسية والمحتويات للموقع -->
+    <div id="store-front-content-view" style="display:none;">
+        
+        <!-- 🥇 بنرات التأثيرات والنبضات الذكية الاحترافية -->
+        <div class="trust-badges-wrapper">
+            <div class="trust-card">
+                <div class="pulse-icon-gold"><i class="fa-solid fa-heart"></i></div>
                 <div>
-                    <strong>ضمان ذهبي</strong>
-                    <p style="font-size:13px; color:#94a3b8;">أغلب منتجاتنا لها ضمان ذهبي لضمان رضاكم</p>
+                    <h4 style="color:var(--gold-glow);">ضمان ذهبي</h4>
+                    <p style="font-size:13px; color:var(--text-muted); margin-top:2px;">أغلب منتجاتنا لها ضمان ذهبي لضمان رضاكم التام</p>
                 </div>
             </div>
-            <div class="badge-box">
-                <div class="pulse-blue">✓</div>
+            <div class="trust-card">
+                <div class="pulse-icon-blue"><i class="fa-solid fa-shield-halved"></i></div>
                 <div>
-                    <strong>موثوقين</strong>
-                    <p style="font-size:13px; color:#94a3b8;">مسجلين ومعتمدين لتقديم الخدمة الآمنة</p>
+                    <h4 style="color:var(--neon-blue);">موثوقين</h4>
+                    <p style="font-size:13px; color:var(--text-muted); margin-top:2px;">عمليات دفع آمنة وتسليم فوري وموثوق 100%</p>
                 </div>
             </div>
         </div>
 
-        <!-- 🛍️ شبكة المنتجات -->
-        <main class="main-container">
-            <h2 id="current-category-title">كل المنتجات</h2>
-            <div class="products-grid" id="products-container"></div>
+        <!-- 📂 شريط الأقسام السريع -->
+        <div class="categories-chips-container" id="chips-injection-area"></div>
+
+        <!-- 🛍️ شبكة عرض المنتجات -->
+        <main class="store-main-layout">
+            <div class="products-dynamic-grid" id="products-injection-area"></div>
         </main>
 
-        <!-- ⭐ قسم آراء وتقييمات العملاء الدوارة -->
-        <div class="reviews-section">
-            <div class="reviews-title-box">
-                <h2>آراء وتقييمات عملائنا الأوفياء</h2>
-                <div class="mystery-avatar"></div>
-            </div>
-            <div id="active-review-content" style="min-height:60px; font-style:italic; margin:15px 0;">لا توجد تعليقات موثقة بعد.</div>
-            <div class="slider-controls">
-                <button class="arrow-btn" onclick="changeReview(-1)">➔</button>
-                <button class="arrow-btn" onclick="changeReview(1)">✦</button>
+        <!-- ⭐ قسم آراء وتقييمات العملاء الدوارة الاحترافية -->
+        <div class="testimonials-slider-section">
+            <div class="slider-avatar-mystery"><i class="fa-solid fa-user-secret"></i></div>
+            <h3 style="margin-bottom:15px;">آراء وتقييمات عملائنا الأوفياء</h3>
+            <div id="active-slider-comment-box" style="min-height:70px; font-size:16px; color:#cbd5e1; line-height:1.6;"></div>
+            <div class="slider-controls-wrap">
+                <button class="slider-arrow" onclick="rotateSlider(-1)"><i class="fa-solid fa-arrow-right"></i></button>
+                <button class="slider-arrow" onclick="rotateSlider(1)"><i class="fa-solid fa-arrow-left"></i></button>
             </div>
         </div>
 
-        <!-- 🔗 قسم الروابط المهمة (6 روابط بحد أقصى) -->
-        <div class="important-links-section">
-            <h2>الروابط المهمة</h2>
-            <div class="links-grid" id="links-container"></div>
+        <!-- 🔗 قسم الروابط المهمة مصفوفة (3 يمين و3 يسار بالتوازي) -->
+        <div class="links-block-section">
+            <h3><i class="fa-solid fa-link" style="color:var(--neon-blue);"></i> الروابط المهمة</h3>
+            <div class="grid-dual-columns" id="links-injection-area"></div>
         </div>
 
-        <!-- 🧾 تذييل الموقع والحقوق والدعم الفني -->
+        <!-- 🧾 تذييل وحقوق المتجر والاتصال الفني -->
         <footer>
-            <a href="https://wa.me/966545988301" target="_blank" class="support-btn">💬 تواصلوا معنا (الدعم الفني)</a>
-            <p>© الحقوق محفوظة لمتجر كيو ار 2026</p>
+            <a href="https://wa.me/966545988301" target="_blank" class="whatsapp-channel-btn">
+                <i class="fa-brands fa-whatsapp" style="font-size:22px;"></i> تواصلوا معنا (الدعم الفني)
+            </a>
+            <p style="color:var(--text-muted); font-size:13px;">جميع الحقوق محفوظة لـ متجر كيو ار © 2026</p>
         </footer>
     </div>
 
-    <!-- 📑 صفحة تفاصيل المنتج الكاملة -->
-    <div id="product-details-page">
-        <span class="back-btn" onclick="closeProductDetails()">✕ العودة للمتجر</span>
-        <div id="product-details-content" class="main-container"></div>
+    <!-- 📄 صفحة كاملة لعرض تفاصيل المنتج والسطور اللانهائية -->
+    <div id="fullscreen-product-details-page" class="fullscreen-overlay-page">
+        <div class="overlay-nav-back" onclick="closeProductDetailsOverlay()"><i class="fa-solid fa-chevron-right"></i> العودة وتصفح المتجر</div>
+        <div id="product-details-heavy-injector"></div>
     </div>
 
-    <!-- 🔗 صفحة كاملة لعرض تفاصيل الرابط المهم -->
-    <div id="full-link-page">
-        <span class="back-btn" onclick="closeLinkPage()">✕ إغلاق الصفحة</span>
-        <h1 id="link-page-title" style="color:var(--neon-blue); margin-bottom:20px;"></h1>
-        <div id="link-page-body" style="font-size:18px; line-height:1.8; white-space:pre-wrap;"></div>
+    <!-- 🔗 صفحة كاملة لعرض تفاصيل الرابط المهم المستقلة -->
+    <div id="fullscreen-link-details-page" class="fullscreen-overlay-page">
+        <div class="overlay-nav-back" onclick="closeLinkDetailsOverlay()"><i class="fa-solid fa-chevron-right"></i> العودة للموقع</div>
+        <h1 id="full-link-view-title" style="color:var(--neon-blue); margin-bottom:25px; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:15px;"></h1>
+        <div id="full-link-view-body" style="font-size:16px; color:#cbd5e1; line-height:1.8; white-space:pre-wrap;"></div>
     </div>
 
-    <!-- 🛒 صفحة السلة وإتمام الطلب -->
-    <div id="cart-page">
-        <span class="back-btn" onclick="closeCartPage()">✕ العودة للمتجر</span>
-        <div class="main-container" id="cart-contents-wrapper">
-            <h2>سلة المشتريات</h2>
-            <div id="cart-items-list" style="margin:20px 0;"></div>
-            <div style="font-size:22px; font-weight:bold; margin-bottom:20px;">المجموع الإجمالي: <span id="cart-total-price">0</span> ريال</div>
-            <button class="btn-buy" style="font-size:18px; padding:12px;" onclick="processCheckout()">إتمام الطلب 💳</button>
+    <!-- 🛒 صفحة السلة الاحترافية والدفع السريع -->
+    <div id="fullscreen-cart-checkout-page" class="fullscreen-overlay-page">
+        <div class="overlay-nav-back" onclick="closeCartView()"><i class="fa-solid fa-chevron-right"></i> استمرار التسوق</div>
+        <div id="cart-core-ui-container">
+            <h2 style="margin-bottom:20px;"><i class="fa-solid fa-cart-shopping" style="color:var(--neon-blue);"></i> سلة المشتريات الحالية</h2>
+            <div id="cart-items-injection-list"></div>
+            <div style="font-size:22px; font-weight:800; margin:25px 0; border-top:1px solid rgba(255,255,255,0.1); padding-top:20px;">
+                المجموع الإجمالي: <span id="cart-computed-total" style="color:var(--neon-blue);">0</span> ريال
+            </div>
+            <button class="core-dashboard-btn" style="padding:16px; font-size:16px;" onclick="executeOrderCheckout()"><i class="fa-solid fa-credit-card"></i> إتمام الطلب الآن</button>
         </div>
-        <div id="order-success-screen" style="display:none;"></div>
+        <!-- شاشة نجاح الفاتورة والواتساب التلقائي -->
+        <div id="order-success-invoice-screen" style="display:none;"></div>
     </div>
 
-    <!-- 📦 صفحة المشتريات السابقة للمشترين -->
-    <div id="prev-orders-page" style="display:none; padding:20px;">
-        <span class="back-btn" onclick="switchSection('main')">✕ العودة للمتجر</span>
-        <div class="main-container">
-            <h2>📦 مشترياتك السابقة المؤكدة</h2>
-            <div id="verified-orders-list" style="margin-top:20px;"></div>
-        </div>
+    <!-- 📦 صفحة المشتريات السابقة والمراجعات الحصرية للمشترين -->
+    <div id="app-previous-orders-page" class="main-container" style="display:none; padding:30px; max-width:1200px; margin:0 auto;">
+        <h2><i class="fa-solid fa-box-open" style="color:var(--neon-blue);"></i> مشترياتك السابقة من المتجر</h2>
+        <div id="verified-device-orders-list" style="margin-top:25px;"></div>
     </div>
 
-    <!-- ⚙️ لوحة الإدارة والتحكم الكاملة (مخفية) -->
-    <div id="admin-page">
-        <div style="display:flex; justify-content:between; align-items:center; border-bottom:1px solid #334155; padding-bottom:10px;">
-            <h2>⚙️ لوحة التحكم الإدارية الفوقية للمتجر</h2>
-            <button class="arrow-btn" style="background:red;" onclick="logoutAdmin()">خروج من الإدارة ✕</button>
+    <!-- ⚙️ لوحة الإدارة والتحكم الفوقية الشاملة والكاملة (مخفية) -->
+    <div id="admin-control-center-view">
+        <div style="display:flex; justify-content:between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.1); padding-bottom:15px;">
+            <h2 style="color:var(--neon-blue);"><i class="fa-solid fa-sliders"></i> لوحة الإدارة ومراقبة المتجر السحابي</h2>
+            <button class="slider-arrow" style="background:#ff3b3b; border:none; color:white; width:auto; padding:0 20px; border-radius:6px;" onclick="exitAdminPanelSystem()">إغلاق اللوحة ✕</button>
         </div>
-        
-        <div class="admin-grid">
-            <!-- إضافة المنتجات والمخزون والسطور اللانهائية -->
-            <div class="admin-card">
-                <h3>➕ إضافة منتج جديد</h3>
-                <input type="text" id="adm-p-id" placeholder="ID المنتج فريد (مثال: p1)...">
-                <input type="text" id="adm-p-title" placeholder="اسم المنتج...">
-                <input type="number" id="adm-p-price" placeholder="السعر الحالي...">
-                <input type="number" id="adm-p-old-price" placeholder="السعر السابق (اختياري لكود الخصم)...">
-                <input type="text" id="adm-p-img" placeholder="رابط صورة المنتج (أو اتركه فارغاً)...">
-                <textarea id="adm-p-desc" placeholder="وصف المنتج الأساسي السريع..."></textarea>
-                <textarea id="adm-p-details" placeholder="تفاصيل المنتج الأساسية..."></textarea>
+
+        <div class="panel-grid-dashboard">
+            <!-- كرت إدارة المنتجات والمخزون والسطور اللانهائية -->
+            <div class="panel-box-card">
+                <h3 style="color:var(--neon-blue); margin-bottom:15px;"><i class="fa-solid fa-square-plus"></i> إضافة وتحديث المنتجات</h3>
+                <input type="text" id="adm-form-p-id" placeholder="ID فريد للمنتج (مثال: p10)...">
+                <input type="text" id="adm-form-p-title" placeholder="اسم المنتج الفاخر...">
+                <input type="number" id="adm-form-p-price" placeholder="السعر الحالي...">
+                <input type="number" id="adm-form-p-oldprice" placeholder="السعر القديم قبل الخصم (اختياري)...">
+                <input type="text" id="adm-form-p-img" placeholder="رابط صورة المنتج...">
                 
-                <div style="margin:10px 0; background:#0f172a; padding:10px; border-radius:6px;">
-                    <label>السطور الإضافية الانهائية (عنوان ومحتوى):</label>
-                    <div id="infinite-rows-container"></div>
-                    <button class="admin-btn" style="background:#475569;" onclick="addInfiniteRowInput()">➕ إضافة سطر زيادة (تحذير، تنويه..الخ)</button>
+                <select id="adm-form-p-category">
+                    <option value="الرئيسي">القسم الرئيسي</option>
+                </select>
+                
+                <textarea id="adm-form-p-desc" placeholder="الوصف القصير للمنتج..."></textarea>
+                <textarea id="adm-form-p-details" style="height:80px;" placeholder="التفاصيل الأساسية للمنتج..."></textarea>
+
+                <!-- قسم السطور الإضافية غير المحدودة واللانهائية -->
+                <div style="margin:15px 0; background:#080d1a; padding:15px; border-radius:8px; border:1px solid rgba(255,255,255,0.02);">
+                    <label style="font-size:13px; color:var(--glowing-cyan); font-weight:bold;">السطور الإضافية الانهائية (العنوان + المحتوى):</label>
+                    <div id="infinite-rows-form-wrapper" style="margin-top:10px;"></div>
+                    <button type="button" class="core-dashboard-btn" style="background:#223154; color:white; font-size:12px; padding:8px; margin-top:5px;" onclick="appendInfiniteRowFormFields()">➕ إضافة سطر زيادة (تحذير، تنويه، ميزة..)</button>
                 </div>
 
-                <select id="adm-p-status">
-                    <option value="available">متوفر (يقدر يشتريه فوراً)</option>
+                <select id="adm-form-p-status">
+                    <option value="available">متوفر للبيع الفوري</option>
                     <option value="later-buy">متوفر لاحقاً وتقدر تأخذه الحين</option>
                     <option value="later-nobuy">متوفر لاحقاً وما تقدر تأخذه</option>
-                    <option value="out">غير متوفر</option>
+                    <option value="out">غير متوفر (نافد)</option>
                 </select>
-                <input type="number" id="adm-p-qty" placeholder="الكمية المتوفرة بالمخزن..." value="50">
-                <button class="admin-btn" onclick="saveProduct()">حفظ ونشر المنتج 🚀</button>
+                <input type="number" id="adm-form-p-qty" placeholder="الكمية المتوفرة بالمخزن الرقمي..." value="100">
+                <button class="core-dashboard-btn" onclick="uploadProductToCloud()">حفظ ونشر المنتج بالسيرفر 🚀</button>
             </div>
 
-            <!-- التحكم بالطلبات والتعليقات -->
-            <div class="admin-card">
-                <h3>📦 محرك إدارة الطلبيات واعتماد التعليق</h3>
-                <input type="text" id="adm-search-order" oninput="searchOrders()" placeholder="ابحث برقم الطلب (مثال: QR46345)...">
-                <div id="adm-orders-results" style="max-height:250px; overflow-y:auto; margin-top:10px; background:#0f172a; padding:10px;"></div>
+            <!-- كرت محرك بحث وإدارة الطلبات والتعليقات والتحكم بالأقسام -->
+            <div class="panel-box-card">
+                <!-- إدارة الأقسام وحذفها وتعديلها -->
+                <h3 style="color:var(--neon-blue); margin-bottom:10px;"><i class="fa-solid fa-folder-plus"></i> إدارة وتعديل أقسام المتجر</h3>
+                <div style="display:flex; gap:10px;">
+                    <input type="text" id="adm-form-cat-name" placeholder="اسم القسم الجديد...">
+                    <button class="core-dashboard-btn" style="width:120px;" onclick="createNewCategoryCloud()">إضافة قسم</button>
+                </div>
+                <div id="adm-cats-list-wrapper" style="display:flex; flex-wrap:wrap; gap:5px; margin:10px 0; background:#080d1a; padding:10px; border-radius:6px;"></div>
 
-                <h3 style="margin-top:20px;">💬 إدارة وتعديل تعليقات العملاء الأوفياء</h3>
-                <div id="adm-reviews-list" style="max-height:250px; overflow-y:auto; background:#0f172a; padding:10px;"></div>
+                <hr style="border:none; border-top:1px solid rgba(255,255,255,0.05); margin:20px 0;">
+
+                <!-- محرك بحث الفواتير -->
+                <h3 style="color:var(--neon-blue); margin-bottom:10px;"><i class="fa-solid fa-magnifying-glass"></i> محرك إدارة وتأكيد الطلبيات</h3>
+                <input type="text" id="adm-order-search-input" oninput="executeOrdersSearchFilter()" placeholder="ابحث فوراً برقم الطلب (مثال: QR4920)...">
+                <div id="adm-orders-results-injector" style="max-height:220px; overflow-y:auto; margin-top:10px; background:#080d1a; padding:10px; border-radius:6px;"></div>
+
+                <hr style="border:none; border-top:1px solid rgba(255,255,255,0.05); margin:20px 0;">
+
+                <!-- تعديل الأخطاء الإملائية وحذف التعليقات -->
+                <h3 style="color:var(--neon-blue); margin-bottom:10px;"><i class="fa-solid fa-comments"></i> تعديل مراجعات وتقييمات العملاء</h3>
+                <div id="adm-reviews-list-injector" style="max-height:220px; overflow-y:auto; background:#080d1a; padding:10px; border-radius:6px;"></div>
             </div>
         </div>
 
-        <!-- إضافة الروابط الستة -->
-        <div class="admin-card" style="margin-top:20px;">
-            <h3>🔗 إضافة وإدارة الروابط المهمة (الحد الأقصى: 6 روابط)</h3>
-            <div class="admin-grid" style="grid-template-columns:1fr 2fr;">
+        <!-- إضافة الروابط الستة والتحكم بها (3 يمين و 3 يسار بحد أقصى) -->
+        <div class="panel-box-card" style="margin-top:30px;">
+            <h3 style="color:var(--neon-blue); margin-bottom:15px;"><i class="fa-solid fa-circle-nodes"></i> التحكم بالروابط المهمة (الحد الأقصى: 6 روابط للتناسق)</h3>
+            <div class="panel-grid-dashboard" style="grid-template-columns: 1fr 1.5fr;">
                 <div>
-                    <input type="text" id="adm-link-title" placeholder="عنوان الرابط (مثال: من نحن)...">
-                    <textarea id="adm-link-desc" style="height:100px;" placeholder="الوصف والصفحة الكاملة للرابط..."></textarea>
-                    <button class="admin-btn" onclick="saveImportantLink()">إضافة الرابط المهم</button>
+                    <input type="text" id="adm-form-link-title" placeholder="عنوان الرابط المهم (مثال: من نحن)...">
+                    <textarea id="adm-form-link-desc" style="height:120px;" placeholder="الوصف الكامل الذي سيظهر في صفحة مستقلة كاملة..."></textarea>
+                    <button class="core-dashboard-btn" onclick="publishImportantLinkToCloud()">حفظ ونشر الرابط المهم</button>
                 </div>
-                <div id="adm-links-list" style="background:#0f172a; padding:10px; border-radius:6px;"></div>
+                <div id="adm-links-list-injector" style="background:#080d1a; padding:15px; border-radius:8px; max-height:250px; overflow-y:auto;"></div>
             </div>
         </div>
     </div>
 
     <!-- ==========================================
-         JAVASCRIPT & SUPABASE LIVE ENGINE
+         ⚙️ CORE DATABASE ENGINE (نظام التحكم البرمجي)
          ========================================== -->
     <script>
-        // تكوين وإعدادات الـ Supabase التلقائية بالتوكن حقك الخاص بالمشروع
+        // تكوين بيانات الاتصال والتوكين لجدول مشروعك على Supabase
         const SUPABASE_URL = "https://zeidzdldqqgixujusimu.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InplaWR6ZGxxcWdpeHVqdXNpbXVzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMwODM3OTcsImV4cCI6MjA5ODY1OTc5N30.-tuUbTftuC9R4FHF0yEfALtTX2JZuTvwNcDJYjpgVvI";
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const cloudClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // متغيرات تتبع حالة التطبيق الفورية
-        let storeState = {
-            products: [], orders: [], reviews: [], links: [], cart: [],
-            currentReviewIndex: 0, activeCategory: 'all'
+        // تتبع المتغيرات اللحظية
+        let globalState = {
+            products: [], orders: [], reviews: [], links: [], categories: [], cart: [],
+            sliderIndex: 0, activeFilterCategory: 'all'
         };
 
-        // --- التنشيط الأسطوري ومؤثرات البرق الفورية ---
-        window.onload = function() {
-            const flash = document.getElementById('flash-effect');
-            const introText = document.getElementById('intro-logo');
-            
-            // ⚡ تأثير ضرب البرق الأول
-            setTimeout(() => { flash.style.opacity = '1'; }, 300);
-            setTimeout(() => { flash.style.opacity = '0'; }, 500);
-            // ⚡ ضربة البرق الثانية المعاكسة للتأكيد
-            setTimeout(() => { flash.style.opacity = '0.6'; }, 700);
-            setTimeout(() => { flash.style.opacity = '0'; }, 850);
+        // --- الأنيميشن وضربات البرق الأسطورية الفورية عند الدخول ---
+        window.addEventListener('DOMContentLoaded', () => {
+            const fx = document.getElementById('lightning-fx');
+            const logo = document.getElementById('intro-text-brand');
 
-            // تدمير الإنترو وبدء عرض واجهة المتجر النيون
+            // ضربة البرق الاحترافية الأولى
+            setTimeout(() => { fx.style.opacity = '1'; }, 200);
+            setTimeout(() => { fx.style.opacity = '0'; }, 350);
+            
+            // ضربة البرق الثانية المعاكسة للتأثير اللامع
+            setTimeout(() => { fx.style.opacity = '0.7'; }, 550);
+            setTimeout(() => { fx.style.opacity = '0'; }, 700);
+
+            // تدمير شاشة الإنترو وعرض المتجر الفخم النيون بالكامل
             setTimeout(() => {
-                introText.style.opacity = '0';
+                logo.style.opacity = '0';
                 setTimeout(() => {
                     document.getElementById('intro-overlay').style.display = 'none';
-                    document.getElementById('main-header').style.display = 'flex';
-                    document.getElementById('store-front-view').style.display = 'block';
-                    initializeStoreData();
-                }, 800);
+                    document.getElementById('store-main-header').style.display = 'flex';
+                    document.getElementById('store-front-content-view').style.display = 'block';
+                    syncAllCloudDataStore();
+                }, 600);
             }, 1800);
-        };
+        });
 
-        // --- جلب البيانات المباشر من السيرفر السحابي لحسابك ---
-        async function initializeStoreData() {
+        // --- المزامنة الحية الفورية والشاملة لكل البيانات ---
+        async function syncAllCloudDataStore() {
             try {
-                const [pRes, oRes, rRes, lRes] = await Promise.all([
-                    supabaseClient.from('products').select('*'),
-                    supabaseClient.from('orders').select('*'),
-                    supabaseClient.from('reviews').select('*'),
-                    supabaseClient.from('links').select('*')
+                const [pRes, oRes, rRes, lRes, cRes] = await Promise.all([
+                    cloudClient.from('products').select('*'),
+                    cloudClient.from('orders').select('*'),
+                    cloudClient.from('reviews').select('*'),
+                    cloudClient.from('links').select('*'),
+                    cloudClient.from('categories').select('*')
                 ]);
 
-                storeState.products = pRes.data || [];
-                storeState.orders = oRes.data || [];
-                storeState.reviews = rRes.data || [];
-                storeState.links = lRes.data || [];
+                globalState.products = pRes.data || [];
+                globalState.orders = oRes.data || [];
+                globalState.reviews = rRes.data || [];
+                globalState.links = lRes.data || [];
+                globalState.categories = cRes.data || [];
 
-                renderProductsGrid();
-                renderReviewsSlider();
-                renderImportantLinks();
-                renderAdminOrders();
-                renderAdminReviews();
-                renderAdminLinksList();
+                renderCategoriesChipsUI();
+                renderProductsGridUI();
+                renderReviewsSliderUI();
+                renderImportantLinksUI();
+                buildAdminCategoryDropdown();
+                renderAdminOrdersPanel();
+                renderAdminReviewsPanel();
+                renderAdminLinksPanel();
             } catch (err) {
-                console.log("خطأ في جلب البيانات السحابية:", err);
+                console.error("فشل مزامنة البيانات السحابية:", err);
             }
         }
 
-        // استماع فوري لأي تحديث يحصل في لوحة التحكم ينزل فوراً للزوار بدون تحديث صفحة
-        supabaseClient.channel('realtime-qr-store').on('postgres_changes', { event: '*', schema: 'public' }, () => {
-            initializeStoreData();
+        // استماع فوري Realtime لتحديث شاشات الزوار فوراً
+        cloudClient.channel('qr-live-stream-channel').on('postgres_changes', { event: '*', schema: 'public' }, () => {
+            syncAllCloudDataStore();
         }).subscribe();
 
-        // --- إدارة واجهات العرض والسلة ---
-        function toggleSidebar() { document.getElementById('sidebar-menu').classList.toggle('open'); }
-        function switchSection(view) {
-            toggleSidebar();
-            if(view === 'main') {
-                document.getElementById('store-front-view').style.display = 'block';
-                document.getElementById('prev-orders-page').style.display = 'none';
-            } else if(view === 'prev-orders') {
-                document.getElementById('store-front-view').style.display = 'none';
-                document.getElementById('prev-orders-page').style.display = 'block';
-                renderPreviousOrders();
+        // --- إدارة القائمة والتبويبات ---
+        function toggleSidebarMenu(status) {
+            const sb = document.getElementById('app-sidebar');
+            if(status) sb.classList.add('sidebar-active'); else sb.classList.remove('sidebar-active');
+        }
+
+        function switchMainTab(target) {
+            toggleSidebarMenu(false);
+            document.getElementById('tab-home').classList.remove('active-tab');
+            document.getElementById('tab-orders').classList.remove('active-tab');
+
+            if(target === 'main') {
+                document.getElementById('tab-home').classList.add('active-tab');
+                document.getElementById('store-front-content-view').style.display = 'block';
+                document.getElementById('app-previous-orders-page').style.display = 'none';
+            } else {
+                document.getElementById('tab-orders').classList.add('active-tab');
+                document.getElementById('store-front-content-view').style.display = 'none';
+                document.getElementById('app-previous-orders-page').style.display = 'block';
+                renderDevicePreviousOrdersUI();
             }
         }
 
-        // بناء كروت المنتجات (2 تحت 2 بنظام الشاشات المتجاوبة الذكي)
-        function renderProductsGrid() {
-            const container = document.getElementById('products-container');
-            container.innerHTML = storeState.products.map(p => `
-                <div class="product-card" onclick="showProductDetails('${p.id}')">
-                    <img class="product-img" src="${p.image || 'https://via.placeholder.com/150/131a30/00d2ff?text=QR+Store'}" alt="">
-                    <h3 style="margin-top:8px; font-size:15px;">${p.title}</h3>
-                    <div class="price-tag">
-                        ${p.price} ر.س
-                        ${p.old_price ? `<span class="old-price">${p.old_price} ر.س</span>` : ''}
+        function backToHomeView() {
+            switchMainTab('main');
+        }
+
+        // --- بناء واجهات الأقسام والمنتجات بدقة المتجر ---
+        function renderCategoriesChipsUI() {
+            const container = document.getElementById('chips-injection-area');
+            let html = `<div class="chip ${globalState.activeFilterCategory === 'all' ? 'active-chip' : ''}" onclick="filterProductsByCategory('all')">كل المنتجات</div>`;
+            globalState.categories.forEach(c => {
+                html += `<div class="chip ${globalState.activeFilterCategory === c.name ? 'active-chip' : ''}" onclick="filterProductsByCategory('${c.name}')">${c.name}</div>`;
+            });
+            container.innerHTML = html;
+        }
+
+        function filterProductsByCategory(catName) {
+            globalState.activeFilterCategory = catName;
+            renderCategoriesChipsUI();
+            renderProductsGridUI();
+        }
+
+        function renderProductsGridUI() {
+            const container = document.getElementById('products-injection-area');
+            let filtered = globalState.products;
+            if(globalState.activeFilterCategory !== 'all') {
+                filtered = globalState.products.filter(p => p.category === globalState.activeFilterCategory);
+            }
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<p style="grid-column: span 2; text-align:center; color:var(--text-muted); padding:30px;">لا توجد منتجات متوفرة في هذا القسم حالياً.</p>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(p => `
+                <div class="modern-product-card" onclick="openProductDetailsOverlay('${p.id}')">
+                    <div class="product-media-wrapper">
+                        <img src="${p.image || 'https://via.placeholder.com/300/0d1326/00f0ff?text=QR+Store'}" alt="">
                     </div>
-                    <div style="font-size:12px; color:#94a3b8; margin-bottom:8px;">
-                        ${p.status === 'available' ? '🟢 متوفر بالمخزن' : p.status === 'later-buy' ? '🔵 متوفر لاحقاً (اطلبه الحين)' : p.status === 'later-nobuy' ? '🟡 متوفر لاحقاً (العرض فقط)' : '🔴 نفدت الكمية'}
+                    <h3 style="margin-top:12px; font-size:16px; font-weight:700;">${p.title}</h3>
+                    <div class="product-glowing-price">
+                        <span>${p.price} ريال</span>
+                        ${p.old_price ? `<span class="product-slashed-price">${p.old_price} ريال</span>` : ''}
                     </div>
-                    <button class="btn-buy" ${ (p.status === 'out' || p.status === 'later-nobuy' || p.qty <= 0) ? 'disabled style="background:#334155;"' : ''} onclick="event.stopPropagation(); addToCart('${p.id}')">
-                        ${(p.status === 'out' || p.qty <= 0) ? 'نفد' : 'إضافة للسلة 🛒'}
+                    <div style="font-size:12px; font-weight:600; margin-bottom:12px; color:var(--text-muted);">
+                        ${p.status === 'available' ? '<span style="color:#25d366;"><i class="fa-solid fa-circle-check"></i> متوفر بالمخزن</span>' : 
+                          p.status === 'later-buy' ? '<span style="color:var(--glowing-cyan);"><i class="fa-solid fa-clock"></i> متوفر لاحقاً (اطلبه الحين)</span>' : 
+                          p.status === 'later-nobuy' ? '<span style="color:var(--gold-glow);"><i class="fa-solid fa-eye"></i> متوفر لاحقاً (للعرض فقط)</span>' : 
+                          '<span style="color:#ff3b3b;"><i class="fa-solid fa-circle-xmark"></i> نافد</span>'}
+                    </div>
+                    <button class="action-shopping-btn" ${ (p.status === 'out' || p.status === 'later-nobuy' || p.qty <= 0) ? 'disabled style="background:#1a233a; color:var(--text-muted); cursor:not-allowed; box-shadow:none;"' : ''} onclick="event.stopPropagation(); appendItemToCart('${p.id}')">
+                        <i class="fa-solid fa-cart-plus"></i> ${(p.status === 'out' || p.qty <= 0) ? 'غير متوفر' : 'إضافة للسلة'}
                     </button>
                 </div>
             `).join('');
         }
 
-        function addToCart(pId) {
-            const prod = storeState.products.find(p => p.id === pId);
-            if(!prod) return;
-            storeState.cart.push(prod);
-            document.getElementById('cart-counter').innerText = storeState.cart.length;
-            alert(`تمت إضافة ${prod.title} إلى السلة بنجاح!`);
-        }
-
-        function openCartPage() {
-            document.getElementById('cart-page').style.display = 'block';
-            const list = document.getElementById('cart-items-list');
-            if(storeState.cart.length === 0) {
-                list.innerHTML = `<p style="text-align:center; color:#64748b;">سلتك فارغة تماماً، اذهب واكتشف المنتجات الأسطورية!</p>`;
-                document.getElementById('cart-total-price').innerText = "0";
-                return;
-            }
-            let total = 0;
-            list.innerHTML = storeState.cart.map((item, idx) => {
-                total += Number(item.price);
-                return `<div style="display:flex; justify-content:space-between; background:var(--card-bg); padding:10px; margin-bottom:10px; border-radius:6px;">
-                    <span>${item.title}</span>
-                    <span style="color:var(--neon-blue); font-weight:bold;">${item.price} ر.س</span>
-                </div>`;
-            }).join('');
-            document.getElementById('cart-total-price').innerText = total;
-        }
-
-        function closeCartPage() {
-            document.getElementById('cart-page').style.display = 'none';
-            document.getElementById('cart-contents-wrapper').style.display = 'block';
-            document.getElementById('order-success-screen').style.display = 'none';
-        }
-
-        // --- إتمام الطلبية وربطها بالواتساب التلقائي المشروط ---
-        async function processCheckout() {
-            if(storeState.cart.length === 0) return alert("السلة فارغة!");
-            
-            // إنتاج كود الطلب العشوائي المتفق عليه
-            const orderNum = Math.floor(10000 + Math.random() * 90000);
-            const orderIdCode = `QR${orderNum}`;
-            const totalSum = storeState.cart.reduce((s, i) => s + Number(i.price), 0);
-
-            // حفظ الطلب في قاعدة البيانات السحابية بوضع الانتظار لحين تأكيدك له كإداري
-            const { error } = await supabaseClient.from('orders').insert([{
-                order_id: orderIdCode,
-                items: storeState.cart,
-                total_price: totalSum,
-                status: 'pending'
-            }]);
-
-            if(error) return alert("فشل الاتصال الفوري بالسيرفر: " + error.message);
-
-            // خصم فوري من الكميات بالمخزن
-            for(let item of storeState.cart) {
-                let currentProd = storeState.products.find(p => p.id === item.id);
-                if(currentProd) {
-                    let nextQty = currentProd.qty - 1;
-                    let nextStatus = nextQty <= 0 ? 'out' : currentProd.status;
-                    await supabaseClient.from('products').update({ qty: nextQty, status: nextStatus }).eq('id', item.id);
-                }
-            }
-
-            // إظهار شاشة النجاح والتحذير الفوقي المتنقل
-            document.getElementById('cart-contents-wrapper').style.display = 'none';
-            const successScreen = document.getElementById('order-success-screen');
-            successScreen.style.display = 'block';
-            successScreen.innerHTML = `
-                <div class="order-success-box">
-                    <h2 style="color:var(--neon-blue);">شكراً لك لشراء من متجر كيو آر 🎉</h2>
-                    <p style="font-size:18px; margin:15px 0;">رقم طلبك: <strong style="color:var(--gold); font-size:22px;">${orderIdCode}</strong></p>
-                    <div style="background:#fee2e2; color:#991b1b; padding:12px; border-radius:8px; font-weight:bold; margin-bottom:15px; display:flex; align-items:center; gap:10px;">
-                        <span style="animation: pulseR 1s infinite; font-size:20px;">⚠️</span>
-                        <span>تحذير: اضغط استمرار للتواصل وتأكد من المنتجات والدفع لتفعيل طلبك!</span>
-                    </div>
-                    <button class="btn-buy" style="background:#25d366; font-size:18px;" onclick="redirectToWhatsApp('${orderIdCode}')">🟢 اضغط للاستمرار وتأكيد الدفع عبر الواتساب</button>
-                </div>
-            `;
-
-            // حفظ رقم الطلب محلياً بالمتصفح حقه عشان يعرف يروح لخانة المشتريات السابقة ويقيم
-            let savedLocalOrders = JSON.parse(localStorage.getItem('my_qr_orders') || '[]');
-            savedLocalOrders.push(orderIdCode);
-            localStorage.setItem('my_qr_orders', JSON.stringify(savedLocalOrders));
-
-            storeState.cart = [];
-            document.getElementById('cart-counter').innerText = "0";
-            initializeStoreData();
-        }
-
-        function redirectToWhatsApp(orderId) {
-            const textMessage = encodeURIComponent(`مرحبًا رقم طلبي ${orderId}`);
-            window.open(`https://wa.me/966545988301?text=${textMessage}`, '_blank');
-        }
-
-        // --- عرض صفحة تفاصيل المنتج والسطور اللانهائية ---
-        function showProductDetails(pId) {
-            const p = storeState.products.find(prod => prod.id === pId);
+        // --- نظام السطور اللانهائية وتفاصيل المنتج الفاخر ---
+        function openProductDetailsOverlay(pId) {
+            const p = globalState.products.find(prod => prod.id === pId);
             if(!p) return;
-            document.getElementById('product-details-page').style.style.display = 'block';
+            
+            document.getElementById('fullscreen-product-details-page').style.display = 'block';
             
             let extraRowsHtml = '';
             if(p.extra_rows) {
-                const rows = JSON.parse(p.extra_rows || '[]');
-                extraRowsHtml = rows.map(r => `
-                    <div style="margin-top:10px; background:#1e293b; padding:12px; border-left:4px solid var(--royal-blue); border-radius:4px;">
-                        <strong style="color:var(--neon-blue);">${r.title}:</strong>
-                        <p style="margin-top:4px; font-size:14px; color:#cbd5e1;">${r.content}</p>
-                    </div>
-                `).join('');
+                try {
+                    const parsed = JSON.parse(p.extra_rows || '[]');
+                    extraRowsHtml = parsed.map(r => `
+                        <div style="margin-top:15px; background:#10172a; padding:15px; border-right:4px solid var(--royal-blue); border-radius:6px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                            <strong style="color:var(--neon-blue); display:block; margin-bottom:4px; font-size:15px;"><i class="fa-solid fa-circle-exclamation"></i> ${r.title}:</strong>
+                            <p style="font-size:14px; color:#cbd5e1; line-height:1.6;">${r.content}</p>
+                        </div>
+                    `).join('');
+                } catch(e) { console.log(e); }
             }
 
-            document.getElementById('product-details-content').innerHTML = `
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                    <img src="${p.image || 'https://via.placeholder.com/300'}" style="width:100%; border-radius:12px; border:1px solid #232d4b;">
+            document.getElementById('product-details-heavy-injector').innerHTML = `
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:30px; margin-top:20px;">
+                    <div class="product-media-wrapper" style="height:340px;">
+                        <img src="${p.image || 'https://via.placeholder.com/400'}" style="width:100%; height:100%; object-fit:cover;">
+                    </div>
                     <div>
-                        <h1 style="color:var(--neon-blue);">${p.title}</h1>
-                        <div class="price-tag" style="font-size:26px;">${p.price} ر.س</div>
-                        <p style="color:#94a3b8; line-height:1.6; margin:15px 0;">${p.description || 'لا يوجد وصف للمنتج.'}</p>
-                        <div style="border-top:1px solid #232d4b; padding-top:15px;">
-                            <h3 style="color:var(--gold);">📋 التفاصيل:</h3>
-                            <p style="white-space:pre-wrap; margin-top:5px;">${p.details || 'لا توجد تفاصيل حالياً.'}</p>
+                        <h1 style="color:var(--text-main); font-size:28px; text-shadow:0 0 10px var(--royal-blue);">${p.title}</h1>
+                        <div class="product-glowing-price" style="font-size:26px; margin:15px 0;">${p.price} ريال</div>
+                        <p style="color:#94a3b8; line-height:1.7; font-size:15px; margin-bottom:20px; background:rgba(255,255,255,0.01); padding:15px; border-radius:8px;">${p.description || 'لا يوجد وصف متاح لهذا المنتج.'}</p>
+                        
+                        <div style="border-top:1px solid rgba(255,255,255,0.1); padding-top:20px;">
+                            <h3 style="color:var(--gold-glow); margin-bottom:8px;"><i class="fa-solid fa-circle-info"></i> التفاصيل الكاملة:</h3>
+                            <p style="white-space:pre-wrap; font-size:14px; color:#cbd5e1; line-height:1.7;">${p.details || 'لا توجد تفاصيل إضافية مضافة.'}</p>
                         </div>
                         ${extraRowsHtml}
                     </div>
                 </div>
             `;
         }
-        function closeProductDetails() { document.getElementById('product-details-page').style.display = 'none'; }
+        function closeProductDetailsOverlay() { document.getElementById('fullscreen-product-details-page').style.display = 'none'; }
 
-        // --- التعليقات المروحة والتحريك التلقائي ---
-        function renderReviewsSlider() {
-            const content = document.getElementById('active-review-content');
-            if(storeState.reviews.length === 0) {
-                content.innerHTML = "لا توجد تعليقات موثقة بعد.";
+        // --- محرك السلة الحية والتحقق الذاتي من النقص والأرصدة ---
+        function appendItemToCart(pId) {
+            const p = globalState.products.find(prod => prod.id === pId);
+            if(!p) return;
+            globalState.cart.push(p);
+            document.getElementById('global-cart-counter').innerText = globalState.cart.length;
+            alert(`تمت إضافة [ ${p.title} ] إلى سلتك بنجاح!`);
+        }
+
+        function openCartView() {
+            document.getElementById('fullscreen-cart-checkout-page').style.display = 'block';
+            const list = document.getElementById('cart-items-injection-list');
+            if(globalState.cart.length === 0) {
+                list.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:40px; font-size:15px;"><i class="fa-solid fa-basket-shopping" style="font-size:40px; display:block; margin-bottom:15px; color:var(--royal-blue);"></i> سلتك فارغة تماماً، تصفح المتجر وأضف ما ترغب فيه!</p>`;
+                document.getElementById('cart-computed-total').innerText = "0";
                 return;
             }
-            if(storeState.currentReviewIndex >= storeState.reviews.length) storeState.currentReviewIndex = 0;
-            const rev = storeState.reviews[storeState.currentReviewIndex];
+            let sum = 0;
+            list.innerHTML = globalState.cart.map((item, idx) => {
+                sum += Number(item.price);
+                return `
+                    <div style="display:flex; justify-content:space-between; align-items:center; background:#10172a; padding:15px; margin-bottom:10px; border-radius:10px; border:1px solid rgba(255,255,255,0.03);">
+                        <div>
+                            <strong style="font-size:15px;">${item.title}</strong>
+                            <div style="font-size:12px; color:var(--neon-blue); margin-top:2px;">تسليم رقمي فوري</div>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:15px;">
+                            <span style="color:var(--neon-blue); font-weight:800;">${item.price} ريال</span>
+                            <i class="fa-solid fa-trash-can" style="color:#ff3b3b; cursor:pointer;" onclick="removeItemFromCartByIndex(${idx})"></i>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('cart-computed-total').innerText = sum;
+        }
+
+        function removeItemFromCartByIndex(idx) {
+            globalState.cart.splice(idx, 1);
+            document.getElementById('global-cart-counter').innerText = globalState.cart.length;
+            openCartView();
+        }
+
+        function closeCartView() {
+            document.getElementById('fullscreen-cart-checkout-page').style.display = 'none';
+            document.getElementById('cart-core-ui-container').style.display = 'block';
+            document.getElementById('order-success-invoice-screen').style.display = 'none';
+        }
+
+        // --- تأكيد وتسجيل الطلب الفوري وربط الواتساب ---
+        async function executeOrderCheckout() {
+            if(globalState.cart.length === 0) return alert("السلة فارغة!");
             
-            let stars = '';
-            for(let i=1; i<=5; i++) { stars += i <= rev.rating ? '⭐' : '☆'; }
+            const randomCode = Math.floor(10000 + Math.random() * 90000);
+            const generatedOrderId = `QR${randomCode}`;
+            const totalCost = globalState.cart.reduce((s, i) => s + Number(i.price), 0);
+
+            // رفع الفاتورة للسيرفر بوضع الانتظار التلقائي
+            const { error } = await cloudClient.from('orders').insert([{
+                order_id: generatedOrderId,
+                items: globalState.cart,
+                total_price: totalCost,
+                status: 'pending'
+            }]);
+
+            if(error) return alert("خطأ بالاتصال بالسيرفر السحابي: " + error.message);
+
+            // خصم المخزون الرقمي فورياً للجميع
+            for(let cartItem of globalState.cart) {
+                let sProd = globalState.products.find(p => p.id === cartItem.id);
+                if(sProd) {
+                    let calculatedQty = sProd.qty - 1;
+                    let calculatedStatus = calculatedQty <= 0 ? 'out' : sProd.status;
+                    await cloudClient.from('products').update({ qty: calculatedQty, status: calculatedStatus }).eq('id', cartItem.id);
+                }
+            }
+
+            // إخفاء واجهة السلة وحقن شاشة النجاح والتحذير الفخم المتحرك
+            document.getElementById('cart-core-ui-container').style.display = 'none';
+            const invoiceScreen = document.getElementById('order-success-invoice-screen');
+            invoiceScreen.style.display = 'block';
+            invoiceScreen.innerHTML = `
+                <div style="background:var(--card-bg); border:2px solid var(--neon-blue); border-radius:16px; padding:35px; max-width:550px; margin:40px auto; text-align:center; box-shadow: 0 0 25px rgba(0,240,255,0.2);">
+                    <i class="fa-solid fa-circle-check" style="font-size:55px; color:#25d366; margin-bottom:15px; display:block;"></i>
+                    <h2 style="color:var(--text-main);">شكراً لك لشراء من متجر كيو آر 🎉</h2>
+                    <p style="font-size:16px; margin:15px 0; color:#cbd5e1;">رقم طلبك الخاص الحصري هو:</p>
+                    <div style="font-size:26px; font-weight:900; color:var(--gold-glow); background:#10172a; padding:10px; border-radius:8px; display:inline-block; letter-spacing:2px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.05);">${generatedOrderId}</div>
+                    
+                    <div style="background:#fee2e2; color:#991b1b; padding:15px; border-radius:10px; font-weight:bold; font-size:13px; line-height:1.6; margin-bottom:20px; display:flex; align-items:center; gap:12px; text-align:right;">
+                        <i class="fa-solid fa-triangle-exclamation" style="font-size:24px; color:#ef4444; animation:bluePulseAnimation 1s infinite;"></i>
+                        <span>تحذير: اضغط استمرار للتواصل وتأكد من المنتجات والدفع لإنهاء الخدمة!</span>
+                    </div>
+
+                    <button class="core-dashboard-btn" style="background:#25d366; color:white; font-size:16px; padding:14px;" onclick="forwardInvoiceToWhatsApp('${generatedOrderId}')">
+                        <i class="fa-brands fa-whatsapp" style="font-size:20px;"></i> اضغط للاستمرار وتأكيد الدفع عبر الواتساب
+                    </button>
+                </div>
+            `;
+
+            // حفظ رقم الفاتورة في كاش المتصفح لتمكين مراجعة المشتريات السابقة
+            let localCache = JSON.parse(localStorage.getItem('qr_device_orders') || '[]');
+            localCache.push(generatedOrderId);
+            localStorage.setItem('qr_device_orders', JSON.stringify(localCache));
+
+            globalState.cart = [];
+            document.getElementById('global-cart-counter').innerText = "0";
+            syncAllCloudDataStore();
+        }
+
+        function forwardInvoiceToWhatsApp(orderId) {
+            const compiledMsg = encodeURIComponent(`مرحبًا رقم طلبي ${orderId}`);
+            window.open(`https://wa.me/966545988301?text=${compiledMsg}`, '_blank');
+        }
+
+        // --- التعليقات المروحة الدوارة التلقائية كل 3 ثواني ---
+        function renderReviewsSliderUI() {
+            const content = document.getElementById('active-slider-comment-box');
+            if(globalState.reviews.length === 0) {
+                content.innerHTML = `<p style="color:var(--text-muted); font-size:14px;">لا توجد تقييمات منشورة حالياً من قبل المشترين الأوفياء.</p>`;
+                return;
+            }
+            if(globalState.sliderIndex >= globalState.reviews.length) globalState.sliderIndex = 0;
+            const targetReview = globalState.reviews[globalState.sliderIndex];
+
+            let starsIcons = '';
+            for(let i=1; i<=5; i++) {
+                starsIcons += i <= targetReview.rating ? '<i class="fa-solid fa-star" style="color:var(--gold-glow); margin:0 2px;"></i>' : '<i class="fa-regular fa-star" style="color:var(--text-muted); margin:0 2px;"></i>';
+            }
 
             content.innerHTML = `
-                <p style="font-size:18px; font-weight:bold; color:var(--neon-blue);">${rev.author_name}</p>
-                <div style="margin:5px 0; font-size:14px;">${stars}</div>
-                <p style="color:#cbd5e1;">"${rev.comment_text}"</p>
-                ${rev.product_title ? `<span style="font-size:11px; background:#232d4b; padding:2px 6px; border-radius:4px; color:var(--gold);">مراجعة لمنتج: ${rev.product_title}</span>` : ''}
+                <div style="font-weight:800; color:var(--neon-blue); font-size:18px; margin-bottom:5px;">${targetReview.author_name}</div>
+                <div style="margin-bottom:10px;">${starsIcons}</div>
+                <p style="font-style:italic; font-size:15px; color:#cbd5e1;">"${targetReview.comment_text}"</p>
+                <span style="font-size:11px; color:var(--gold-glow); background:rgba(255,215,0,0.05); padding:3px 8px; border-radius:4px; display:inline-block; margin-top:8px; border:1px solid rgba(255,215,0,0.1);"><i class="fa-solid fa-square-rss"></i> مراجعة معتمدة لـ: ${targetReview.product_title}</span>
             `;
         }
 
-        function changeReview(direction) {
-            if(storeState.reviews.length === 0) return;
-            storeState.currentReviewIndex += direction;
-            if(storeState.currentReviewIndex < 0) storeState.currentReviewIndex = storeState.reviews.length - 1;
-            if(storeState.currentReviewIndex >= storeState.reviews.length) storeState.currentReviewIndex = 0;
-            renderReviewsSlider();
+        function rotateSlider(dir) {
+            if(globalState.reviews.length === 0) return;
+            globalState.sliderIndex += dir;
+            if(globalState.sliderIndex < 0) globalState.sliderIndex = globalState.reviews.length - 1;
+            if(globalState.sliderIndex >= globalState.reviews.length) globalState.sliderIndex = 0;
+            renderReviewsSliderUI();
         }
-        // لف تلقائي كل 3 ثوانٍ للمراجعات كما طلبت بالملي!
-        setInterval(() => { changeReview(1); }, 3000);
+        // دحرجة تلقائية حقيقية كل 3 ثواني بدون أخطاء كما طلبت بالملي!
+        setInterval(() => { rotateSlider(1); }, 3000);
 
-        // --- الروابط المهمة وصفحتها المنفصلة الكاملة ---
-        function renderImportantLinks() {
-            const container = document.getElementById('links-container');
-            container.innerHTML = storeState.links.map(l => `
-                <div class="link-card" onclick="openLinkPage('${l.id}')">${l.title}</div>
+        // --- الروابط المهمة والصفحة المستقلة الكاملة (مصفوفة 3 يمين و 3 يسار) ---
+        function renderImportantLinksUI() {
+            const container = document.getElementById('links-injection-area');
+            container.innerHTML = globalState.links.map(l => `
+                <div class="interactive-link-card" onclick="triggerFullscreenLinkView('${l.id}')">
+                    <span>${l.title}</span>
+                    <i class="fa-solid fa-chevron-left" style="color:var(--neon-blue); font-size:14px;"></i>
+                </div>
             `).join('');
         }
-        function openLinkPage(linkId) {
-            const link = storeState.links.find(l => l.id == linkId);
-            if(!link) return;
-            document.getElementById('link-page-title').innerText = link.title;
-            document.getElementById('link-page-body').innerText = link.description;
-            document.getElementById('full-link-page').style.display = 'block';
-        }
-        function closeLinkPage() { document.getElementById('full-link-page').style.display = 'none'; }
 
-        // --- المشتريات السابقة ونظام التعليق المغلق للمشترين المعتمدين ---
-        function renderPreviousOrders() {
-            const container = document.getElementById('verified-orders-list');
-            let myOrders = JSON.parse(localStorage.getItem('my_qr_orders') || '[]');
-            
-            if(myOrders.length === 0) {
-                container.innerHTML = `<p style="color:#64748b;">لم تقم بأي طلبات من هذا الجهاز بعد.</p>`;
+        function triggerFullscreenLinkView(id) {
+            const l = globalState.links.find(link => link.id == id);
+            if(!l) return;
+            document.getElementById('full-link-view-title').innerText = l.title;
+            document.getElementById('full-link-view-body').innerText = l.description;
+            document.getElementById('fullscreen-link-details-page').style.display = 'block';
+        }
+        function closeLinkDetailsOverlay() { document.getElementById('fullscreen-link-details-page').style.display = 'none'; }
+
+        // --- المشتريات السابقة الحصرية للتعليق لمرة واحدة للمشترين المعتمدين ---
+        function renderDevicePreviousOrdersUI() {
+            const container = document.getElementById('verified-device-orders-list');
+            let cachedIds = JSON.parse(localStorage.getItem('qr_device_orders') || '[]');
+
+            if(cachedIds.length === 0) {
+                container.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding:30px;">لم تقم بإجراء أي طلبات من هذا المتصفح بعد.</p>`;
                 return;
             }
 
-            // فحص حالة الطلبات من السيرفر وعرض المنتجات للتعليق
             let html = '';
-            myOrders.forEach(oId => {
-                let serverOrder = storeState.orders.find(o => o.order_id === oId);
-                if(serverOrder) {
-                    let isCompleted = serverOrder.status === 'completed';
+            cachedIds.forEach(idCode => {
+                let match = globalState.orders.find(o => o.order_id === idCode);
+                if(match) {
+                    let done = match.status === 'completed';
                     html += `
-                        <div style="background:var(--card-bg); padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid #232d4b;">
-                            <div style="display:flex; justify-content:space-between;">
-                                <strong>طلب رقم: ${oId}</strong>
-                                <span style="color:${isCompleted ? 'green' : 'orange'}">${isCompleted ? '✅ تمت تلبية طلبك' : '⏳ قيد المراجعة والانتظار'}</span>
+                        <div style="background:var(--card-bg); padding:20px; border-radius:12px; margin-bottom:15px; border:1px solid rgba(255,255,255,0.03);">
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <strong>رقم العملية: ${idCode}</strong>
+                                <span style="font-weight:bold; color:${done ? '#25d366' : 'var(--gold-glow)'};">
+                                    ${done ? '<i class="fa-solid fa-circle-check"></i> تمت تلبية وتأكيد الفاتورة' : '<i class="fa-solid fa-spinner fa-spin"></i> قيد المراجعة'}
+                                </span>
                             </div>
-                            <p style="margin:5px 0; font-size:14px;">المبلغ: ${serverOrder.total_price} ر.س</p>
-                            ${isCompleted ? `
-                                <div style="margin-top:10px; border-top:1px dashed #475569; padding-top:10px;">
-                                    <p style="color:var(--gold); font-size:13px; font-weight:bold;">✍️ يحق لك التعليق لمرة واحدة الآن على المتجر أو المنتجات المشتراة:</p>
-                                    <input type="text" id="rev-name-${oId}" placeholder="اكتب اسمك الحقيقي والمستعار المعتمد...">
-                                    <textarea id="rev-text-${oId}" placeholder="اكتب مراجعتك وتقييمك الصادق..."></textarea>
-                                    <select id="rev-stars-${oId}">
-                                        <option value="5">⭐⭐⭐⭐⭐ (5/5)</option>
-                                        <option value="4">⭐⭐⭐⭐ (4/5)</option>
-                                        <option value="3">⭐⭐⭐ (3/5)</option>
-                                        <option value="2">⭐⭐ (2/5)</option>
-                                        <option value="1">⭐ (1/5)</option>
+                            <div style="font-size:14px; margin:10px 0; color:#cbd5e1;">القيمة الإجمالية: ${match.total_price} ريال</div>
+                            
+                            ${done ? `
+                                <div style="margin-top:15px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:15px;">
+                                    <p style="color:var(--neon-blue); font-size:13px; font-weight:bold; margin-bottom:10px;"><i class="fa-solid fa-pen-to-square"></i> يحق لك الآن كتابة تعليقك المعتمد لمرة واحدة الحين:</p>
+                                    <input type="text" id="user-input-revname-${idCode}" placeholder="اكتب اسمك الصريح أو المستعار...">
+                                    <textarea id="user-input-revtext-${idCode}" placeholder="رأيك الصادق في جودة المنتج والخدمة الرقمية..."></textarea>
+                                    <select id="user-input-revstars-${idCode}">
+                                        <option value="5">⭐⭐⭐⭐⭐ (5 / 5)</option>
+                                        <option value="4">⭐⭐⭐⭐ (4 / 5)</option>
+                                        <option value="3">⭐⭐⭐ (3 / 5)</option>
+                                        <option value="2">⭐⭐ (2 / 5)</option>
+                                        <option value="1">⭐ (1 / 5)</option>
                                     </select>
-                                    <button class="btn-buy" style="background:var(--neon-blue); color:black;" onclick="submitVerifiedReview('${oId}')">إرسال التقييم الموثق للسيرفر</button>
+                                    <button class="core-dashboard-btn" onclick="sendVerifiedUserReviewCloud('${idCode}')">إرسال ونشر التقييم فوراً</button>
                                 </div>
-                            ` : '<p style="font-size:12px; color:#64748b;">سيفتح لك نظام التقييم والتعليق فور قيام الإداري بـ (تأكيد وإتمام الطلب) في لوحة التحكم.</p>'}
+                            ` : `<p style="font-size:12px; color:var(--text-muted); background:rgba(255,255,255,0.01); padding:10px; border-radius:6px; margin-top:10px;"><i class="fa-solid fa-lock"></i> نظام التعليقات والتقييم سيفتح لك هنا فور قيام المدير باعتماد وتغيير حالة الطلب إلى (مكتمل).</p>`}
                         </div>
                     `;
                 }
             });
-            container.innerHTML = html || `<p style="color:#64748b;">لا توجد طلبات معالجة حالياً.</p>`;
+            container.innerHTML = html || `<p style="color:var(--text-muted); text-align:center;">لا توجد طلبات معالجة حالياً.</p>`;
         }
 
-        async function submitVerifiedReview(orderId) {
-            const name = document.getElementById(`rev-name-${orderId}`).value.trim();
-            const text = document.getElementById(`rev-text-${orderId}`).value.trim();
-            const stars = document.getElementById(`rev-stars-${orderId}`).value;
-            if(!name || !text) return alert("يرجى كتابة الاسم والتعليق أولاً!");
+        async function sendVerifiedUserReviewCloud(orderId) {
+            const name = document.getElementById(`user-input-revname-${orderId}`).value.trim();
+            const text = document.getElementById(`user-input-revtext-${orderId}`).value.trim();
+            const rate = document.getElementById(`user-input-revstars-${orderId}`).value;
 
-            const order = storeState.orders.find(o => o.order_id === orderId);
-            const pTitle = (order && order.items && order.items[0]) ? order.items[0].title : 'متجر QR';
+            if(!name || !text) return alert("الرجاء تعبئة الاسم والتعليق لتأكيد المراجعة!");
 
-            const { error } = await supabaseClient.from('reviews').insert([{
+            const orderNode = globalState.orders.find(o => o.order_id === orderId);
+            const productTitleRef = (orderNode && orderNode.items && orderNode.items[0]) ? orderNode.items[0].title : 'منتجات متجر QR';
+
+            const { error } = await cloudClient.from('reviews').insert([{
                 author_name: name,
                 comment_text: text,
-                rating: parseInt(stars),
-                product_title: pTitle,
+                rating: parseInt(rate),
+                product_title: productTitleRef,
                 order_referenced: orderId
             }]);
 
             if(error) alert(error.message);
             else {
-                alert("🌟 تم نشر تعليقك الأسطوري ووضعه في الصفحة الرئيسية فوراً!");
-                renderPreviousOrders();
+                alert("🌟 تم نشر تقييمك الموثق بنجاح ووضعه في قائمة الآراء بالصفحة الرئيسية!");
+                renderDevicePreviousOrdersUI();
             }
         }
 
-        // --- نظام الإداري الخارق المقفل ---
-        function promptAdminLogin() {
-            let password = prompt("أدخل كلمة المرور الخاصة بلوحة تحكم متجر QR الإدارية:");
-            if (password === "12") {
-                document.getElementById('admin-page').style.display = 'block';
+        // --- ⚙️ لوحة التحكم الإدارية الاحترافية والكاملة (الباسورد: 12) ---
+        function handleAdminSystemGate() {
+            let pass = prompt("أدخل الرقم السري للوحة الإدارة الفوقية لمتجر كيو آر:");
+            if(pass === "12") {
+                document.getElementById('admin-control-center-view').style.display = 'block';
             } else {
-                alert("❌ كلمة المرور خاطئة! لا تحاول دخول نظام التحكم.");
+                alert("❌ عذراً! كلمة المرور التي أدخلتها خاطئة.");
             }
         }
-        function logoutAdmin() { document.getElementById('admin-page').style.display = 'none'; }
+        function exitAdminPanelSystem() { document.getElementById('admin-control-center-view').style.display = 'none'; }
 
-        // السطور الانهائية في لوحة التحكم
-        let currentExtraRows = [];
-        function addInfiniteRowInput() {
-            const container = document.getElementById('infinite-rows-container');
-            const rowId = Date.now();
+        // تجميع وبناء السطور اللانهائية
+        function appendInfiniteRowFormFields() {
+            const container = document.getElementById('infinite-rows-form-wrapper');
+            const uid = Date.now();
             const div = document.createElement('div');
-            div.id = `row-form-${rowId}`;
+            div.id = `row-group-${uid}`;
             div.style.display = 'flex'; div.style.gap = '5px'; div.style.marginBottom = '5px';
             div.innerHTML = `
-                <input type="text" placeholder="العنوان (مثال: تحذير)..." class="row-t">
-                <input type="text" placeholder="المحتوى والمخزن..." class="row-c">
-                <button onclick="document.getElementById('row-form-${rowId}').remove()" style="background:red; color:white; border:none; padding:5px; border-radius:4px;">✕</button>
+                <input type="text" placeholder="العنوان (مثال: تحذير)..." class="inf-t-field">
+                <input type="text" placeholder="المحتوى النصي السطر..." class="inf-c-field">
+                <button type="button" style="background:#ff3b3b; color:white; border:none; padding:10px; border-radius:6px; cursor:pointer;" onclick="document.getElementById('row-group-${uid}').remove()">✕</button>
             `;
             container.appendChild(div);
         }
 
-        async function saveProduct() {
-            const id = document.getElementById('adm-p-id').value.trim();
-            const title = document.getElementById('adm-p-title').value.trim();
-            const price = document.getElementById('adm-p-price').value;
-            const oldPrice = document.getElementById('adm-p-old-price').value;
-            const img = document.getElementById('adm-p-img').value;
-            const desc = document.getElementById('adm-p-desc').value;
-            const details = document.getElementById('adm-p-details').value;
-            const status = document.getElementById('adm-p-status').value;
-            const qty = document.getElementById('adm-p-qty').value;
+        function buildAdminCategoryDropdown() {
+            const select = document.getElementById('adm-form-p-category');
+            let html = `<option value="الرئيسي">القسم الرئيسي</option>`;
+            globalState.categories.forEach(c => {
+                html += `<option value="${c.name}">${c.name}</option>`;
+            });
+            select.innerHTML = html;
 
-            if(!id || !title || !price) return alert("أكمل بيانات المنتج الرئيسية!");
+            // بناء قائمة حذف الأقسام في نفس اللحظة
+            const listWrapper = document.getElementById('adm-cats-list-wrapper');
+            listWrapper.innerHTML = globalState.categories.map(c => `
+                <span style="background:#192239; padding:4px 10px; border-radius:4px; font-size:12px; display:inline-flex; align-items:center; gap:6px;">
+                    ${c.name} <i class="fa-solid fa-circle-xmark" style="color:#ff3b3b; cursor:pointer;" onclick="removeCategoryFromCloud('${c.id}')"></i>
+                </span>
+            `).join('') || '<span style="color:var(--text-muted); font-size:12px;">لا توجد أقسام فرعية إضافية مضافة بعد.</span>';
+        }
 
-            // تجميع الأسطر اللانهائية لحفظها بملف الـ JSON
-            let rowElements = document.getElementById('infinite-rows-container').children;
-            let rowsData = [];
-            for(let el of rowElements) {
-                let t = el.querySelector('.row-t').value;
-                let c = el.querySelector('.row-c').value;
-                if(t && c) rowsData.push({title: t, content: c});
+        async function createNewCategoryCloud() {
+            const n = document.getElementById('adm-form-cat-name').value.trim();
+            if(!n) return alert("أدخل اسم قسم صالح أولاً!");
+            const { error } = await cloudClient.from('categories').insert([{ name: n }]);
+            if(error) alert(error.message); else {
+                document.getElementById('adm-form-cat-name').value = '';
+                alert("تمت إضافة القسم بنجاح للسيرفر!");
+                syncAllCloudDataStore();
+            }
+        }
+
+        async function removeCategoryFromCloud(id) {
+            if(confirm("هل أنت متأكد من حذف هذا القسم نهائياً من المتجر؟")) {
+                await cloudClient.from('categories').delete().eq('id', id);
+                syncAllCloudDataStore();
+            }
+        }
+
+        async function uploadProductToCloud() {
+            const id = document.getElementById('adm-form-p-id').value.trim();
+            const title = document.getElementById('adm-form-p-title').value.trim();
+            const price = document.getElementById('adm-form-p-price').value;
+            const oldPrice = document.getElementById('adm-form-p-oldprice').value;
+            const img = document.getElementById('adm-form-p-img').value;
+            const cat = document.getElementById('adm-form-p-category').value;
+            const desc = document.getElementById('adm-form-p-desc').value;
+            const details = document.getElementById('adm-form-p-details').value;
+            const status = document.getElementById('adm-form-p-status').value;
+            const qty = document.getElementById('adm-form-p-qty').value;
+
+            if(!id || !title || !price) return alert("الرجاء إكمال البيانات الأساسية للمنتج (المعرف، الاسم، السعر)!");
+
+            // استخراج وتجهيز السطور اللانهائية بصيغة JSON
+            let childs = document.getElementById('infinite-rows-form-wrapper').children;
+            let finalRowsJson = [];
+            for(let block of childs) {
+                let tVal = block.querySelector('.inf-t-field').value.trim();
+                let cVal = block.querySelector('.inf-c-field').value.trim();
+                if(tVal && cVal) finalRowsJson.push({ title: tVal, content: cVal });
             }
 
-            const { error } = await supabaseClient.from('products').upsert([{
-                id: id, title: title, price: price, old_price: oldPrice || null,
-                image: img || null, description: desc, details: details, status: status,
-                qty: parseInt(qty), extra_rows: JSON.stringify(rowsData)
+            const { error } = await cloudClient.from('products').upsert([{
+                id, title, price: parseFloat(price), old_price: oldPrice ? parseFloat(oldPrice) : null,
+                image: img || null, category: cat, description: desc, details, status,
+                qty: parseInt(qty), extra_rows: JSON.stringify(finalRowsJson)
             }]);
 
             if(error) alert(error.message);
             else {
-                alert("🚀 تم حفظ وإضافة وتعديل المنتج في السيرفر السحابي!");
-                document.getElementById('infinite-rows-container').innerHTML = '';
-                initializeStoreData();
+                alert("🚀 تم رفع وتحديث وحفظ المنتج في السيرفر السحابي لمتجرك بنجاح!");
+                document.getElementById('infinite-rows-form-wrapper').innerHTML = '';
+                syncAllCloudDataStore();
             }
         }
 
-        // محرك بحث الطلبات للتحكم والموافقة
-        function renderAdminOrders(filteredOrders = storeState.orders) {
-            const res = document.getElementById('adm-orders-results');
-            res.innerHTML = filteredOrders.map(o => `
-                <div style="background:#1e293b; padding:10px; margin-bottom:8px; border-radius:6px; font-size:13px;">
-                    <div><strong>رقم الطلب: ${o.order_id}</strong> | السعر الإجمالي: ${o.total_price} ر.س</div>
-                    <div style="color:orange; margin:4px 0;">الحالة الحالية: ${o.status === 'completed' ? '🟢 مكتمل' : '⏳ قيد الانتظار'}</div>
-                    <div style="display:flex; gap:5px; margin-top:5px;">
-                        <button class="arrow-btn" style="background:green; font-size:11px;" onclick="updateOrderStatus('${o.id}', 'completed')">✔️ تمت وتأكيد الطلبية للتعليق</button>
-                        <button class="arrow-btn" style="background:#ef4444; font-size:11px;" onclick="deleteOrder('${o.id}')">✕ مسح وحذف الطلب</button>
+        // إدارة الطلبيات وفلترة فواتير محرك البحث
+        function renderAdminOrdersPanel(filtered = globalState.orders) {
+            const container = document.getElementById('adm-orders-results-injector');
+            container.innerHTML = filtered.map(o => `
+                <div style="background:#192239; padding:12px; border-radius:8px; margin-bottom:8px; font-size:13px; border:1px solid rgba(255,255,255,0.02);">
+                    <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                        <span>رقم الطلب: ${o.order_id}</span>
+                        <span style="color:var(--neon-blue);">${o.total_price} ريال</span>
+                    </div>
+                    <div style="margin:4px 0; color:var(--text-muted);">الحالة: ${o.status === 'completed' ? '<span style="color:#25d366;">مكتمل</span>' : 'قيد المراجعة والانتظار'}</div>
+                    <div style="display:flex; gap:6px; margin-top:8px;">
+                        ${o.status !== 'completed' ? `<button class="core-dashboard-btn" style="padding:6px; font-size:11px; background:#25d366; color:white;" onclick="changeOrderStatusOnCloud('${o.id}', 'completed')"><i class="fa-solid fa-square-check"></i> تأكيد وإتمام الطلبية وتفعيل التعليق</button>` : ''}
+                        <button class="core-dashboard-btn" style="padding:6px; font-size:11px; background:#ff3b3b; color:white; width:90px;" onclick="wipeOrderFromCloud('${o.id}')"><i class="fa-solid fa-trash"></i> حذف</button>
                     </div>
                 </div>
-            `).join('');
+            `).join('') || '<p style="font-size:12px; color:var(--text-muted); text-align:center;">لا توجد فواتير مطابقة لبحثك.</p>';
         }
 
-        function searchOrders() {
-            const query = document.getElementById('adm-search-order').value.toUpperCase();
-            const filtered = storeState.orders.filter(o => o.order_id.includes(query));
-            renderAdminOrders(filtered);
+        function executeOrdersSearchFilter() {
+            const q = document.getElementById('adm-order-search-input').value.trim().toUpperCase();
+            const matches = globalState.orders.filter(o => o.order_id.includes(q));
+            renderAdminOrdersPanel(matches);
         }
 
-        async function updateOrderStatus(id, status) {
-            await supabaseClient.from('orders').update({ status: status }).eq('id', id);
-            alert("تم إكمال الطلبية! يمكن للعميل الآن الدخول من جهازه والتعليق.");
-            initializeStoreData();
+        async function changeOrderStatusOnCloud(tableId, targetStatus) {
+            await cloudClient.from('orders').update({ status: targetStatus }).eq('id', tableId);
+            alert("تم تأكيد العملية! فتحت الآن صلاحية التعليق التلقائي للمشتري.");
+            syncAllCloudDataStore();
         }
 
-        async function deleteOrder(id) {
-            if(confirm("هل تريد بالتأكيد حذف هذه الطلبية نهائياً لتنظيف المخزن؟")) {
-                await supabaseClient.from('orders').delete().eq('id', id);
-                initializeStoreData();
+        async function wipeOrderFromCloud(tableId) {
+            if(confirm("هل تود إزالة وحذف الفاتورة لتنظيف لوحة التحكم؟")) {
+                await cloudClient.from('orders').delete().eq('id', tableId);
+                syncAllCloudDataStore();
             }
         }
 
-        // مراقبة وحذف وتعديل تعليقات الأخطاء الإملائية للعملاء الأوفياء
-        function renderAdminReviews() {
-            const res = document.getElementById('adm-reviews-list');
-            res.innerHTML = storeState.reviews.map(r => `
-                <div style="background:#1e293b; padding:10px; margin-bottom:8px; border-radius:6px; font-size:13px;">
-                    <strong>العميل: ${r.author_name}</strong>
-                    <input type="text" value="${r.comment_text}" id="adm-rev-input-${r.id}" style="padding:4px; margin:4px 0;">
-                    <div style="display:flex; gap:5px;">
-                        <button class="arrow-btn" style="background:blue; font-size:11px;" onclick="editReviewText('${r.id}')">💾 تعديل الخطأ الإملائي</button>
-                        <button class="arrow-btn" style="background:red; font-size:11px;" onclick="deleteReview('${r.id}')">✕ حذف المراجعة</button>
+        // إدارة مراجعات وتقييمات وتعديل الأخطاء الإملائية
+        function renderAdminReviewsPanel() {
+            const container = document.getElementById('adm-reviews-list-injector');
+            container.innerHTML = globalState.reviews.map(r => `
+                <div style="background:#192239; padding:12px; border-radius:8px; margin-bottom:8px; font-size:13px;">
+                    <div style="font-weight:bold; color:var(--neon-blue); margin-bottom:4px;">العميل: ${r.author_name}</div>
+                    <input type="text" value="${r.comment_text}" id="adm-edit-review-inputtext-${r.id}" style="padding:6px; margin:4px 0;">
+                    <div style="display:flex; gap:6px; margin-top:4px;">
+                        <button class="core-dashboard-btn" style="padding:5px; font-size:11px; background:var(--royal-blue); color:white;" onclick="modifyReviewTextCloud('${r.id}')"><i class="fa-solid fa-floppy-disk"></i> حفظ تعديل الإملاء</button>
+                        <button class="core-dashboard-btn" style="padding:5px; font-size:11px; background:#ff3b3b; color:white; width:80px;" onclick="wipeReviewFromCloud('${r.id}')"><i class="fa-solid fa-trash-can"></i> حذف</button>
                     </div>
                 </div>
-            `).join('');
+            `).join('') || '<p style="font-size:12px; color:var(--text-muted); text-align:center;">لا توجد تعليقات منشورة بعد للمراقبة.</p>';
         }
 
-        async function editReviewText(id) {
-            const nextText = document.getElementById(`adm-rev-input-${id}`).value;
-            await supabaseClient.from('reviews').update({ comment_text: nextText }).eq('id', id);
-            alert("تم تعديل نص التعليق بنجاح وفورياً!");
-            initializeStoreData();
+        async function modifyReviewTextCloud(id) {
+            const t = document.getElementById(`adm-edit-review-inputtext-${id}`).value.trim();
+            await cloudClient.from('reviews').update({ comment_text: t }).eq('id', id);
+            alert("تم حفظ وتصحيح النص الإملائي فورياً بالصفحة الرئيسية!");
+            syncAllCloudDataStore();
         }
 
-        async function deleteReview(id) {
-            if(confirm("حذف التعليق؟")) {
-                await supabaseClient.from('reviews').delete().eq('id', id);
-                initializeStoreData();
+        async function wipeReviewFromCloud(id) {
+            if(confirm("هل أنت متأكد من حذف هذا التعليق نهائياً؟")) {
+                await cloudClient.from('reviews').delete().eq('id', id);
+                syncAllCloudDataStore();
             }
         }
 
-        // إدارة وحفظ الروابط الستة الهامة
-        async function saveImportantLink() {
-            if(storeState.links.length >= 6) return alert("⚠️ النظام مقفل على 6 روابط هامة كحد أقصى مصفوفة (3 يمين و 3 يسار) كما طلبت بالملي!");
-            const title = document.getElementById('adm-link-title').value;
-            const desc = document.getElementById('adm-link-desc').value;
-            
-            await supabaseClient.from('links').insert([{ title, description: desc }]);
-            alert("تم حفظ ونشر الرابط الهام!");
-            document.getElementById('adm-link-title').value = '';
-            document.getElementById('adm-link-desc').value = '';
-            initializeStoreData();
+        // إدارة وحفظ الروابط الستة الهامة (مصفوفة 3 يمين و 3 يسار)
+        async function publishImportantLinkToCloud() {
+            if(globalState.links.length >= 6) return alert("النظام مقفل ومتناسق هندسياً على 6 روابط هامة كحد أقصى (3 يمين و3 يسار)!");
+            const title = document.getElementById('adm-form-link-title').value.trim();
+            const desc = document.getElementById('adm-form-link-desc').value.trim();
+
+            if(!title || !desc) return alert("الرجاء كتابة العنوان والمحتوى التفصيلي للرابط المهم!");
+
+            await cloudClient.from('links').insert([{ title, description: desc }]);
+            alert("تم نشر وحفظ الرابط الهام بنجاح!");
+            document.getElementById('adm-form-link-title').value = '';
+            document.getElementById('adm-form-link-desc').value = '';
+            syncAllCloudDataStore();
         }
 
-        function renderAdminLinksList() {
-            const res = document.getElementById('adm-links-list');
-            res.innerHTML = storeState.links.map(l => `
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px; background:#1e293b; padding:5px; border-radius:4px;">
+        function renderAdminLinksPanel() {
+            const container = document.getElementById('adm-links-list-injector');
+            container.innerHTML = globalState.links.map(l => `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:#192239; padding:8px 12px; border-radius:6px; margin-bottom:5px; font-size:13px;">
                     <span>${l.title}</span>
-                    <button style="background:red; color:white; border:none; cursor:pointer; padding:2px 6px;" onclick="deleteLink('${l.id}')">✕</button>
+                    <i class="fa-solid fa-trash-can" style="color:#ff3b3b; cursor:pointer;" onclick="wipeLinkFromCloud('${l.id}')"></i>
                 </div>
-            `).join('');
+            `).join('') || '<p style="font-size:12px; color:var(--text-muted); text-align:center;">لا توجد روابط مضافة حالياً.</p>';
         }
 
-        async function deleteLink(id) {
-            await supabaseClient.from('links').delete().eq('id', id);
-            initializeStoreData();
+        async function wipeLinkFromCloud(id) {
+            if(confirm("مسح الرابط المهم؟")) {
+                await cloudClient.from('links').delete().eq('id', id);
+                syncAllCloudDataStore();
+            }
         }
     </script>
 </body>
